@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/my_nav"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.nalasbusinesstracker.fragments.home.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/home_addInventory"
+            app:destination="@id/addInventoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addInventoryFragment"
+        android:name="com.example.nalasbusinesstracker.fragments.home.AddInventoryFragment"
+        android:label="fragment_add_inventory"
+        tools:layout="@layout/fragment_add_inventory" />
+    <fragment
+        android:id="@+id/addExpenseFragment"
+        android:name="com.example.nalasbusinesstracker.fragments.expenses.ExpensesFragment"
+        android:label="fragment_add_expense"
+        tools:layout="@layout/fragment_add_expense" />
+    <fragment
+        android:id="@+id/graphsFragment"
+        android:name="com.example.nalasbusinesstracker.fragments.graphs.GraphsFragment"
+        android:label="fragment_graphs"
+        tools:layout="@layout/fragment_graphs">
+        <action
+            android:id="@+id/graphs_pieChart"
+            app:destination="@id/pieChartFragment" />
+        <action
+            android:id="@+id/graphs_barChart"
+            app:destination="@id/barChartFragment" />
+        <action
+            android:id="@+id/graphs_lineChart"
+            app:destination="@id/lineChartFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/statisticsFragment"
+        android:name="com.example.nalasbusinesstracker.fragments.statistics.StatisticsFragment"
+        android:label="fragment_statistics"
+        tools:layout="@layout/fragment_statistics" />
+    <fragment
+        android:id="@+id/lineChartFragment"
+        android:name="com.example.nalasbusinesstracker.fragments.graphs.LineChartFragment"
+        android:label="fragment_line_chart"
+        tools:layout="@layout/fragment_line_chart" />
+    <fragment
+        android:id="@+id/barChartFragment"
+        android:name="com.example.nalasbusinesstracker.fragments.graphs.BarChartFragment"
+        android:label="fragment_bar_chart"
+        tools:layout="@layout/fragment_bar_chart" />
+    <fragment
+        android:id="@+id/pieChartFragment"
+        android:name="com.example.nalasbusinesstracker.fragments.graphs.PieChartFragment"
+        android:label="fragment_pie_chart"
+        tools:layout="@layout/fragment_pie_chart" />
+</navigation>

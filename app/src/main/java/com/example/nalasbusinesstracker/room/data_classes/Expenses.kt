@@ -1,4 +1,4 @@
-package com.example.nalasbusinesstracker.data_classes
+package com.example.nalasbusinesstracker.room.data_classes
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
