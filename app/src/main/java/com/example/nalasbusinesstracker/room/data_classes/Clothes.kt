@@ -10,13 +10,14 @@ import kotlinx.parcelize.Parcelize
 data class Clothes(
     @PrimaryKey
     val itemCode: String,
-    val clotheType: String,
+    val clothingType: String,
     val dominantColor: String,
     val purchasePrice: Double,
+    val sellingPrice : Double,
     val purchaseDate: Long,
     val currentStatus: String,
     val imageReference: String,
-    val clotheSize : Double,
+    val clothingSize : Double,
     val supplierName: String? = null,
     val storageTime : Long = System.currentTimeMillis()
 ) : Parcelable

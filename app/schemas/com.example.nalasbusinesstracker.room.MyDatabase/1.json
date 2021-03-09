@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "91bc136d8d2a9d62ff8fa5527621e099",
+    "identityHash": "831a5e0bda64930c4342a9523b0aae13",
     "entities": [
       {
         "tableName": "Clothes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`itemCode` TEXT NOT NULL, `clotheType` TEXT NOT NULL, `dominantColor` TEXT NOT NULL, `purchasePrice` REAL NOT NULL, `purchaseDate` INTEGER NOT NULL, `currentStatus` TEXT NOT NULL, `imageReference` TEXT NOT NULL, `clotheSize` REAL NOT NULL, `supplierName` TEXT, `storageTime` INTEGER NOT NULL, PRIMARY KEY(`itemCode`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`itemCode` TEXT NOT NULL, `clothingType` TEXT NOT NULL, `dominantColor` TEXT NOT NULL, `purchasePrice` REAL NOT NULL, `sellingPrice` REAL NOT NULL, `purchaseDate` INTEGER NOT NULL, `currentStatus` TEXT NOT NULL, `imageReference` TEXT NOT NULL, `clothingSize` REAL NOT NULL, `supplierName` TEXT, `storageTime` INTEGER NOT NULL, PRIMARY KEY(`itemCode`))",
         "fields": [
           {
             "fieldPath": "itemCode",
@@ -15,8 +15,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "clotheType",
-            "columnName": "clotheType",
+            "fieldPath": "clothingType",
+            "columnName": "clothingType",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -29,6 +29,12 @@
           {
             "fieldPath": "purchasePrice",
             "columnName": "purchasePrice",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sellingPrice",
+            "columnName": "sellingPrice",
             "affinity": "REAL",
             "notNull": true
           },
@@ -51,8 +57,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "clotheSize",
-            "columnName": "clotheSize",
+            "fieldPath": "clothingSize",
+            "columnName": "clothingSize",
             "affinity": "REAL",
             "notNull": true
           },
@@ -120,7 +126,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '91bc136d8d2a9d62ff8fa5527621e099')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '831a5e0bda64930c4342a9523b0aae13')"
     ]
   }
 }

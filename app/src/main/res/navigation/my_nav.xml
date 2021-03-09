@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.nalasbusinesstracker.fragments.home.HomeFragment"
+        android:name="com.example.nalasbusinesstracker.fragments.home.home_fragment.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/addInventoryFragment"
-        android:name="com.example.nalasbusinesstracker.fragments.home.AddInventoryFragment"
+        android:name="com.example.nalasbusinesstracker.fragments.home.add_inventory.AddInventoryFragment"
         android:label="fragment_add_inventory"
         tools:layout="@layout/fragment_add_inventory" />
     <fragment

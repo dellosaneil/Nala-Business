@@ -2,4 +2,10 @@
     <string name="app_name">Nala\'s Business Tracker</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="homeRV_status">Status: %1$s</string>
+    <string name="homeRV_buyPrice">₱%1$d</string>
+
+
+
 </resources>

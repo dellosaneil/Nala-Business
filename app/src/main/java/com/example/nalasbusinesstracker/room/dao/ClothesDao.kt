@@ -10,23 +10,15 @@ import com.example.nalasbusinesstracker.room.data_classes.Clothes
 interface ClothesDao {
 
     @Insert
-    suspend fun insertClothe(clothes: Clothes)
+    suspend fun insertClothing(clothing: Clothes)
 
     @Query("SELECT * FROM clothes ORDER BY storageTime DESC")
     suspend fun retrieveAllClothes(): List<Clothes>
-
-    @Query("SELECT * FROM clothes WHERE clotheType = :type ORDER BY storageTime DESC")
-    suspend fun retrieveByType(type: String): List<Clothes>
-
-    @Query("SELECT * FROM clothes WHERE dominantColor = :color ORDER BY storageTime DESC")
-    suspend fun retrieveByColor(color: String): List<Clothes>
-
     @Delete
-    suspend fun deleteClothe(clothes: Clothes)
+    suspend fun deleteClothing(clothes: Clothes)
 
-
-    @Query("SELECT COUNT(*) FROM clothes WHERE purchaseDate = :date AND currentStatus = :status")
-    suspend fun clothesSoldForOneDay(date : Long, status : String) : Int
+    @Query("SELECT * FROM clothes WHERE clothingType LIKE :type AND dominantColor LIKE :color AND currentStatus LIKE :status AND itemCode LIKE :code ORDER BY storageTime DESC")
+    suspend fun queryClothes(type : String, color : String, status : String, code :String) : List<Clothes>
 
 
 }

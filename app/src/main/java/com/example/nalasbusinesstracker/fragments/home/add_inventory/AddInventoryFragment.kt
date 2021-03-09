@@ -1,4 +1,4 @@
-package com.example.nalasbusinesstracker.fragments.home
+package com.example.nalasbusinesstracker.fragments.home.add_inventory
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
