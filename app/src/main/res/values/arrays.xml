@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="inventory_hint">
+        <item>Item Code</item>
+        <item>Dominant Color</item>
+        <item>Purchase Price</item>
+        <item>Selling Price</item>
+        <item>Purchase Date</item>
+        <item>Clothing Size</item>
+        <item>Supplier Name</item>
+    </string-array>
+
+
+
+
+</resources>

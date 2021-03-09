@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.nalasbusinesstracker.R
 import com.example.nalasbusinesstracker.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked {
@@ -30,6 +32,13 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeRecyclerView()
+        floatingActionButton(view)
+    }
+
+    private fun floatingActionButton(view: View) {
+        binding.homeFragmentAdd.setOnClickListener {
+            Navigation.findNavController(view).navigate(R.id.home_addInventory)
+        }
     }
 
     private fun initializeRecyclerView() {

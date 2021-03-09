@@ -1,14 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddInventoryFragment">
+    android:layout_gravity="center"
+    tools:context=".fragments.home.add_inventory.AddInventoryFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical">
 
-</FrameLayout>
+        <include
+            android:id="@+id/inventory_itemCode"
+            layout="@layout/layout_edit_text" />
+
+        <include
+            android:id="@+id/inventory_dominantColor"
+            layout="@layout/layout_edit_text" />
+
+        <include
+            android:id="@+id/inventory_purchasePrice"
+            layout="@layout/layout_edit_text" />
+
+        <include
+            android:id="@+id/inventory_sellingPrice"
+            layout="@layout/layout_edit_text" />
+
+        <include
+            android:id="@+id/inventory_purchaseDate"
+            layout="@layout/layout_edit_text" />
+
+        <include
+            android:id="@+id/inventory_clothingSize"
+            layout="@layout/layout_edit_text" />
+
+        <include
+            android:id="@+id/inventory_supplierName"
+            layout="@layout/layout_edit_text" />
+
+        <ImageButton
+            android:layout_width="100dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="24dp"
+            tools:ignore="ContentDescription" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/inventory_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/inventory_save" />
+
+
+    </LinearLayout>
+
+</ScrollView>
+
+    <!--al itemCode: String,
+        val clothingType: String,
+        val dominantColor: String,
+        val purchasePrice: Double,
+        val sellingPrice : Double,
+        val purchaseDate: Long,
+        val currentStatus: String,
+        val imageReference: String,
+        val clothingSize : Double,
+        val supplierName: String? = null,
+        val storageTime : Long = System.currentTimeMillis()-->
