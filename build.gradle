@@ -3,6 +3,8 @@ buildscript {
     ext{
         kotlin_version = "1.4.31"
         nav_version = "2.3.3"
+        hilt_version = '2.33-beta'
+        google_version = "4.3.5"
     }
 
     repositories {
@@ -13,6 +15,8 @@ buildscript {
         classpath "com.android.tools.build:gradle:4.1.2"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
+        classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
+        classpath "com.google.gms:google-services:$google_version"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -23,6 +27,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url 'https://jitpack.io' }
     }
 }
 
@@ -33,7 +38,10 @@ task clean(type: Delete) {
 ext{
     room_version = "2.2.6"
     nav_version = "2.3.3"
-
-
+    chart_version = "v3.1.0"
+    datastore_version = "1.0.0-alpha06"
+    lifecycle_version = "2.3.0"
+    glide_version = "4.12.0"
+    storage_version = "26.6.0"
 
 }

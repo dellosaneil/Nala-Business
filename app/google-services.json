@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "452885207155",
+    "project_id": "nala-b036c",
+    "storage_bucket": "nala-b036c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:452885207155:android:d514e6a7bc690862d63206",
+        "android_client_info": {
+          "package_name": "com.example.nalasbusinesstracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "452885207155-k1bqca7e5qrbs14gkr51mpntgqp3sips.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8OPN81nMlKTUb9nN7qvX0MUYU7pqQvWU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "452885207155-k1bqca7e5qrbs14gkr51mpntgqp3sips.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
