@@ -6,7 +6,7 @@
     <string name="homeRV_status">Status: %1$s</string>
     <string name="homeRV_buyPrice">₱%1$d</string>
 
-    <string name="inventory_save">Save</string>
+    <string name="inventory_save">Add to Inventory</string>
     <string name="inventory_calendar">Purchase Date</string>
 
 

@@ -38,22 +38,22 @@
             layout="@layout/layout_edit_text" />
 
 
-
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/inventory_purchaseDate"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginStart="56dp"
+            android:textSize="14sp"
             android:layout_marginEnd="56dp"
             android:drawableEnd="@drawable/ic_calendar_24"
             android:gravity="start|center_vertical"
             android:hint="@string/inventory_calendar" />
 
         <ImageButton
-            android:layout_width="100dp"
-            android:layout_height="150dp"
+            android:id="@+id/inventory_image"
+            android:layout_width="150dp"
+            android:layout_height="175dp"
             android:layout_marginTop="24dp"
             tools:ignore="ContentDescription" />
 
@@ -62,6 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:layout_marginBottom="36dp"
             android:text="@string/inventory_save" />
 
     </LinearLayout>
