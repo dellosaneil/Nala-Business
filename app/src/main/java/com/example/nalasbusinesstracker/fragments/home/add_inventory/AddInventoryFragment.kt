@@ -34,6 +34,7 @@ import com.google.firebase.storage.ktx.storage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -250,8 +251,8 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
     }
 
     private fun saveToInventory() {
-        if (checkValues()) {
-            lifecycleScope.launch(IO){
+        lifecycleScope.launch(IO) {
+            if (checkValues()) {
                 saveToStorage()
                 val clothingData = Clothes(
                     valuesArray[0] as String,
@@ -273,22 +274,25 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
 
     private val TAG = "AddInventoryFragment"
 
-    private fun checkValues(): Boolean {
-        var canSave: Boolean
-        repeat(editTextArray.size) {
-            if (editTextArray[it].editTextInput.text?.isEmpty() == true) {
-                editTextArray[it].editTextLayout.error =
+    private suspend fun checkValues(): Boolean {
+        var canSave = true
+        withContext(Main) {
+            repeat(editTextArray.size) {
+                if (editTextArray[it].editTextInput.text?.isEmpty() == true) {
+                    editTextArray[it].editTextLayout.error =
+                        resources.getString(R.string.inventory_required)
+                    canSave = false
+                } else {
+                    editTextArray[it].editTextLayout.error = null
+                }
+            }
+            if (binding.inventoryPurchaseDate.hint == resources.getString(R.string.inventory_calendar)) {
+                binding.inventoryPurchaseDate.error =
                     resources.getString(R.string.inventory_required)
                 canSave = false
-            } else {
-                editTextArray[it].editTextLayout.error = null
             }
         }
-        if (binding.inventoryPurchaseDate.hint == resources.getString(R.string.inventory_calendar)) {
-            binding.inventoryPurchaseDate.error = resources.getString(R.string.inventory_required)
-            canSave = false
-        }
-        lifecycleScope.launch(IO) {
+        val job = lifecycleScope.async(IO) {
             val checkCode = repository.checkCode(editTextArray[0].editTextInput.text.toString())
             withContext(Main) {
                 if (checkCode != 0) {
@@ -299,11 +303,14 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
                 }
             }
         }
-        canSave = uriImage != null
+        job.await()
+        if(uriImage == null){
+            canSave = false
+        }
         return canSave
     }
 
-    private suspend fun saveToStorage() {
+    private fun saveToStorage() {
         storage.child("${STORAGE_PATH}${valuesArray[0]}").putFile(uriImage!!)
     }
 }
