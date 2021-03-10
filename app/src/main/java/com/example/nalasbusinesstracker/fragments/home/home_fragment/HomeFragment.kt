@@ -1,12 +1,14 @@
 package com.example.nalasbusinesstracker.fragments.home.home_fragment
 
+import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.nalasbusinesstracker.R
 import com.example.nalasbusinesstracker.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked{
@@ -69,7 +72,7 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked{
     private fun initializeRecyclerView() {
         binding.homeFragmentRv.apply {
             adapter = homeAdapter
-            val spanCount = if(resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 2 else 4
+            val spanCount = calculateNumberColumns(requireContext())
             layoutManager = GridLayoutManager(requireContext(), spanCount)
         }
         observeAdapterChanges()
@@ -102,5 +105,14 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked{
     override fun clothingClicked(index: Int) {
         Log.i(TAG, "clothingClicked: $index")
     }
+
+    private fun calculateNumberColumns(
+        context: Context
+    ): Int {
+        val displayMetrics: DisplayMetrics = context.resources.displayMetrics
+        val screenWidthDp = displayMetrics.widthPixels / displayMetrics.density
+        return (screenWidthDp / 162 + 0.5).toInt()
+    }
+
 
 }

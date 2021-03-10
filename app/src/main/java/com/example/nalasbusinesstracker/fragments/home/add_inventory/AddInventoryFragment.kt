@@ -269,16 +269,16 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
             if (checkValues()) {
                 saveToStorage()
                 val clothingData = Clothes(
-                    valuesArray[0] as String,
-                    valuesArray[1] as String,
-                    valuesArray[2] as String,
+                    valuesArray[0].toString(),
+                    valuesArray[1].toString(),
+                    valuesArray[2].toString(),
                     valuesArray[3] as Double,
                     valuesArray[4] as Double,
                     datePurchased,
                     "Available",
                     "${STORAGE_PATH}${valuesArray[0]}",
                     valuesArray[5] as Double,
-                    valuesArray[6] as String
+                    valuesArray[6].toString()
                 )
                 repository.insertClothing(clothingData)
                 withContext(Main) {
