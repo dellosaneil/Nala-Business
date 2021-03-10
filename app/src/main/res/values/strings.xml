@@ -4,7 +4,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="homeRV_status">Status: %1$s</string>
-    <string name="homeRV_buyPrice">₱%1$d</string>
+    <string name="homeRV_buyPrice">₱%1$s</string>
 
     <string name="inventory_save">Add to Inventory</string>
     <string name="inventory_calendar">Purchase Date</string>

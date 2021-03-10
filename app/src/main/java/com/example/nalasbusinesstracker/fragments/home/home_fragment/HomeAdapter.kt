@@ -11,11 +11,12 @@ import com.example.nalasbusinesstracker.R
 import com.example.nalasbusinesstracker.databinding.ListHomeBinding
 import com.example.nalasbusinesstracker.room.data_classes.Clothes
 
-class HomeAdapter(private val listener : HomeClothingClicked) : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
+class HomeAdapter(private val listener: HomeClothingClicked) :
+    RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
     private var clothes = listOf<Clothes>()
 
 
-    fun updateClothes(newClothes : List<Clothes>){
+    fun updateClothes(newClothes: List<Clothes>) {
         val oldList = clothes
         val diffResult = DiffUtil.calculateDiff(HomeDiffUtil(oldList, newClothes))
         clothes = newClothes
@@ -35,28 +36,38 @@ class HomeAdapter(private val listener : HomeClothingClicked) : RecyclerView.Ada
 
     override fun getItemCount() = clothes.size
 
-    private class HomeDiffUtil(private val oldList : List<Clothes>, private val newList : List<Clothes>) : DiffUtil.Callback() {
+    private class HomeDiffUtil(
+        private val oldList: List<Clothes>,
+        private val newList: List<Clothes>
+    ) : DiffUtil.Callback() {
         override fun getOldListSize() = oldList.size
 
         override fun getNewListSize() = newList.size
 
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) = oldList[oldItemPosition].itemCode == newList[newItemPosition].itemCode
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+            oldList[oldItemPosition].itemCode == newList[newItemPosition].itemCode
 
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) = oldList[oldItemPosition] == newList[newItemPosition]
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+            oldList[oldItemPosition] == newList[newItemPosition]
 
     }
 
-    inner class HomeViewHolder(private val binding : ListHomeBinding) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
-        private val resources : Resources = binding.root.resources
+    inner class HomeViewHolder(private val binding: ListHomeBinding) :
+        RecyclerView.ViewHolder(binding.root), View.OnClickListener {
+        private val resources: Resources = binding.root.resources
 
-        init{
+        init {
             binding.homeRVContainer.setOnClickListener(this)
         }
 
-        fun bind(clothing : Clothes){
+        fun bind(clothing: Clothes) {
             binding.homeRVCode.text = clothing.itemCode
-            binding.homeRVStatus.text = resources.getString(R.string.homeRV_status, clothing.currentStatus)
-            binding.homeRVPrice.text = resources.getString(R.string.homeRV_buyPrice, clothing.purchasePrice)
+            binding.homeRVStatus.text =
+                resources.getString(R.string.homeRV_status, clothing.currentStatus)
+            binding.homeRVPrice.text = resources.getString(
+                R.string.homeRV_buyPrice,
+                String.format("%.2f", clothing.purchasePrice)
+            )
             GlideApp.with(binding.root)
                 .load(clothing.imageReference)
                 .placeholder(R.drawable.ic_cloth_100)
@@ -64,16 +75,15 @@ class HomeAdapter(private val listener : HomeClothingClicked) : RecyclerView.Ada
         }
 
 
-
         override fun onClick(v: View?) {
-            when(v?.id){
+            when (v?.id) {
                 R.id.homeRV_container -> listener.clothingClicked(adapterPosition)
             }
         }
     }
 
 
-    interface HomeClothingClicked{
-        fun clothingClicked(index : Int)
+    interface HomeClothingClicked {
+        fun clothingClicked(index: Int)
     }
 }

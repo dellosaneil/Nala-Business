@@ -20,11 +20,17 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.nalasbusinesstracker.Constants.DATA_STORE_NAME
 import com.example.nalasbusinesstracker.Constants.LATEST_DATE_KEY
+import com.example.nalasbusinesstracker.Constants.STORAGE_PATH
 import com.example.nalasbusinesstracker.R
 import com.example.nalasbusinesstracker.databinding.FragmentAddInventoryBinding
 import com.example.nalasbusinesstracker.databinding.LayoutEditTextBinding
 import com.example.nalasbusinesstracker.repositories.ClothingRepository
+import com.example.nalasbusinesstracker.room.data_classes.Clothes
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.ktx.storage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -43,6 +49,7 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
     private lateinit var dateKey: Preferences.Key<Long>
     private val bundleArray = arrayOf(
         "itemCode",
+        "clothingType",
         "dominantColor",
         "purchasePrice",
         "sellingPrice",
@@ -50,10 +57,12 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         "supplierName",
         "imageUri"
     )
-    private val valuesArray = arrayOf<Any>("", "", 0.0, 0.0, 0.0, "")
+    private lateinit var storage: StorageReference
+    private val valuesArray = arrayOf<Any>("", "", "", 0.0, 0.0, 0.0, "")
     private var uriImage: Uri? = null
+    private var datePurchased = 0L
+    private var editTextArray = arrayOf<LayoutEditTextBinding>()
 
-    private val TAG = "AddInventoryFragment"
 
     @Inject
     lateinit var repository: ClothingRepository
@@ -75,25 +84,30 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initializeEditTextArray()
         initializeEditText()
         setClickListeners()
         initializeDataStore()
         savedInstanceState?.let {
             retrieveFromConfigurationChange(it)
         }
-
+        storage = Firebase.storage.reference
     }
 
-
-    private fun retrieveFromConfigurationChange(savedInstanceState: Bundle) {
-        val editTextArray = arrayOf(
+    private fun initializeEditTextArray() {
+        editTextArray = arrayOf(
             binding.inventoryItemCode,
+            binding.inventoryClothingType,
             binding.inventoryDominantColor,
             binding.inventoryPurchasePrice,
             binding.inventorySellingPrice,
             binding.inventoryClothingSize,
             binding.inventorySupplierName
         )
+    }
+
+
+    private fun retrieveFromConfigurationChange(savedInstanceState: Bundle) {
         repeat(editTextArray.size) {
             try {
                 val temp = savedInstanceState.getDouble(bundleArray[it])
@@ -103,7 +117,6 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
                 editTextArray[it].editTextInput.setText(temp)
             }
         }
-
         savedInstanceState.getParcelable<Uri>(bundleArray[6])?.let {
             insertImage(it)
         }
@@ -141,44 +154,6 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun checkValues(): Boolean {
-        var canSave = true
-        val editTextArray = arrayOf(
-            binding.inventoryItemCode,
-            binding.inventoryDominantColor,
-            binding.inventoryPurchasePrice,
-            binding.inventorySellingPrice,
-            binding.inventoryClothingSize,
-            binding.inventorySupplierName
-        )
-        repeat(editTextArray.size) {
-            if (editTextArray[it].editTextInput.text?.isEmpty() == true) {
-                editTextArray[it].editTextLayout.error =
-                    resources.getString(R.string.inventory_required)
-                canSave = false
-            } else {
-                editTextArray[it].editTextLayout.error = null
-            }
-        }
-        if (binding.inventoryPurchaseDate.hint == resources.getString(R.string.inventory_calendar)) {
-            binding.inventoryPurchaseDate.error = resources.getString(R.string.inventory_required)
-            canSave = false
-        }
-        lifecycleScope.launch(IO) {
-            val checkCode = repository.checkCode(editTextArray[0].editTextInput.text.toString())
-            withContext(Main) {
-                if (!checkCode.equals(0)) {
-                    editTextArray[0].editTextLayout.error = getString(R.string.inventory_code_used)
-                    canSave = false
-                } else {
-                    editTextArray[0].editTextLayout.error = null
-                }
-            }
-        }
-        return canSave
-    }
-
-
     private fun setClickListeners() {
         binding.inventoryPurchaseDate.setOnClickListener(this)
         binding.inventorySave.setOnClickListener(this)
@@ -190,18 +165,11 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         val typeArray = arrayOf(
             InputType.TYPE_CLASS_TEXT,
             InputType.TYPE_CLASS_TEXT,
+            InputType.TYPE_CLASS_TEXT,
             InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL,
             InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL,
             InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL,
             InputType.TYPE_CLASS_TEXT
-        )
-        val editTextArray = arrayOf(
-            binding.inventoryItemCode,
-            binding.inventoryDominantColor,
-            binding.inventoryPurchasePrice,
-            binding.inventorySellingPrice,
-            binding.inventoryClothingSize,
-            binding.inventorySupplierName
         )
         repeat(editTextArray.size) {
             editTextArray[it].editTextLayout.hint = hintArray[it]
@@ -255,6 +223,7 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
     }
 
     private fun changeDateHint(milliseconds: Long) {
+        datePurchased = milliseconds
         val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.ROOT)
         val dateString: String = simpleDateFormat.format(milliseconds)
         binding.inventoryPurchaseDate.hint = dateString
@@ -282,7 +251,70 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
 
     private fun saveToInventory() {
         if (checkValues()) {
-
+            lifecycleScope.launch(IO){
+                saveToStorage()
+                val clothingData = Clothes(
+                    valuesArray[0] as String,
+                    valuesArray[1] as String,
+                    valuesArray[2] as String,
+                    valuesArray[3] as Double,
+                    valuesArray[4] as Double,
+                    datePurchased,
+                    "Available",
+                    "${STORAGE_PATH}${valuesArray[0]}",
+                    valuesArray[5] as Double,
+                    valuesArray[6] as String
+                )
+                repository.insertClothing(clothingData)
+            }
         }
     }
+
+    private fun checkValues(): Boolean {
+        var canSave: Boolean
+        repeat(editTextArray.size) {
+            if (editTextArray[it].editTextInput.text?.isEmpty() == true) {
+                editTextArray[it].editTextLayout.error =
+                    resources.getString(R.string.inventory_required)
+                canSave = false
+            } else {
+                editTextArray[it].editTextLayout.error = null
+            }
+        }
+        if (binding.inventoryPurchaseDate.hint == resources.getString(R.string.inventory_calendar)) {
+            binding.inventoryPurchaseDate.error = resources.getString(R.string.inventory_required)
+            canSave = false
+        }
+        lifecycleScope.launch(IO) {
+            val checkCode = repository.checkCode(editTextArray[0].editTextInput.text.toString())
+            withContext(Main) {
+                if (checkCode != 0) {
+                    editTextArray[0].editTextLayout.error = getString(R.string.inventory_code_used)
+                    canSave = false
+                } else {
+                    editTextArray[0].editTextLayout.error = null
+                }
+            }
+        }
+        canSave = uriImage != null
+        return canSave
+    }
+
+    private suspend fun saveToStorage() {
+        storage.child("${STORAGE_PATH}${valuesArray[0]}").putFile(uriImage!!)
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

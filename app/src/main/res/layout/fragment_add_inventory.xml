@@ -18,6 +18,10 @@
             layout="@layout/layout_edit_text" />
 
         <include
+            android:id="@+id/inventory_clothingType"
+            layout="@layout/layout_edit_text" />
+
+        <include
             android:id="@+id/inventory_dominantColor"
             layout="@layout/layout_edit_text" />
 

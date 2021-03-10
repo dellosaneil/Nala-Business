@@ -27,7 +27,7 @@ interface ClothesDao {
     ): List<Clothes>
 
     @Query("SELECT COUNT(*) FROM clothes WHERE itemCode = :code")
-    suspend fun checkCode(code: String) = Int
+    suspend fun checkCode(code: String) : Int
 
 
 }

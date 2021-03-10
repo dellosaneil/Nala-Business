@@ -2,6 +2,7 @@
 <resources>
     <string-array name="inventory_hint">
         <item>Item Code</item>
+        <item>Clothing Type</item>
         <item>Dominant Color</item>
         <item>Purchase Price</item>
         <item>Selling Price</item>
