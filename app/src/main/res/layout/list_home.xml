@@ -15,6 +15,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
+        <View
+            android:id="@+id/homeRV_line"
+            android:layout_width="0dp"
+            android:background="@color/gray"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="1dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/homeRV_image" />
+
         <ImageView
             android:id="@+id/homeRV_image"
             android:layout_width="150dp"
@@ -28,6 +40,7 @@
             app:layout_constraintTop_toBottomOf="@+id/homeRV_code"
             tools:ignore="ContentDescription"
             tools:src="@drawable/ic_cloth_100" />
+
 
 
         <com.google.android.material.textview.MaterialTextView
@@ -50,8 +63,8 @@
             android:layout_marginEnd="4dp"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/homeRV_image"
-            app:layout_constraintTop_toBottomOf="@+id/homeRV_image"
+            app:layout_constraintEnd_toEndOf="@+id/homeRV_line"
+            app:layout_constraintTop_toBottomOf="@+id/homeRV_line"
             tools:text="₱50.00" />
 
         <com.google.android.material.textview.MaterialTextView

@@ -29,9 +29,9 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked{
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             if (dy > 0) {
-                binding.homeFragmentAdd.visibility = View.GONE
+                binding.homeFragmentAdd.hide()
             } else if (dy < 0) {
-                binding.homeFragmentAdd.visibility = View.VISIBLE
+                binding.homeFragmentAdd.show()
             }
         }
     }

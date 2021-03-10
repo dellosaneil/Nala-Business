@@ -2,9 +2,7 @@ package com.example.nalasbusinesstracker.fragments.home.add_inventory
 
 import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
 import android.text.InputType
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -285,10 +283,28 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
                 repository.insertClothing(clothingData)
                 withContext(Main) {
                     handleToastMessage(getString(R.string.inventory_finished_upload))
-                    Navigation.findNavController(binding.root).navigateUp()
+                    clearValues()
                 }
             }
         }
+    }
+
+    private fun clearValues() {
+        val initialValues = arrayOf("", "", "", 0.0, 0.0, 0.0, "")
+        repeat(initialValues.size) {
+            valuesArray[it] = initialValues[it]
+        }
+        uriImage = null
+        repeat(editTextArray.size) {
+            editTextArray[it].editTextInput.text = null
+        }
+        binding.inventoryImage.setImageDrawable(null)
+        binding.inventoryImage.setBackgroundColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.gray
+            )
+        )
     }
 
 
@@ -335,6 +351,7 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         storage.child("${STORAGE_PATH}${valuesArray[0]}").putFile(uriImage!!)
 
     }
+
 }
 
 
