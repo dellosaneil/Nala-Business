@@ -1,15 +1,19 @@
 package com.example.nalasbusinesstracker.fragments.home.home_fragment
 
 import android.content.res.Resources
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.example.nalasbusinesstracker.Constants.FIREBASE_STORAGE_LINK
 import com.example.nalasbusinesstracker.GlideApp
 import com.example.nalasbusinesstracker.R
 import com.example.nalasbusinesstracker.databinding.ListHomeBinding
 import com.example.nalasbusinesstracker.room.data_classes.Clothes
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 
 class HomeAdapter(private val listener: HomeClothingClicked) :
     RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
@@ -68,8 +72,12 @@ class HomeAdapter(private val listener: HomeClothingClicked) :
                 R.string.homeRV_buyPrice,
                 String.format("%.2f", clothing.purchasePrice)
             )
+            val storageClothingReference =
+                Firebase.storage.getReferenceFromUrl("$FIREBASE_STORAGE_LINK${clothing.imageReference}")
+
             GlideApp.with(binding.root)
-                .load(clothing.imageReference)
+                .load(storageClothingReference)
+                .fitCenter()
                 .placeholder(R.drawable.ic_cloth_100)
                 .into(binding.homeRVImage)
         }

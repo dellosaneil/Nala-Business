@@ -266,9 +266,12 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
                     valuesArray[6] as String
                 )
                 repository.insertClothing(clothingData)
+                Log.i(TAG, "saveToInventory: ${STORAGE_PATH}${valuesArray[0]}")
             }
         }
     }
+
+    private val TAG = "AddInventoryFragment"
 
     private fun checkValues(): Boolean {
         var canSave: Boolean
