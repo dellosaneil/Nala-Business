@@ -14,11 +14,20 @@ interface ClothesDao {
 
     @Query("SELECT * FROM clothes ORDER BY storageTime DESC")
     suspend fun retrieveAllClothes(): List<Clothes>
+
     @Delete
     suspend fun deleteClothing(clothes: Clothes)
 
     @Query("SELECT * FROM clothes WHERE clothingType LIKE :type AND dominantColor LIKE :color AND currentStatus LIKE :status AND itemCode LIKE :code ORDER BY storageTime DESC")
-    suspend fun queryClothes(type : String, color : String, status : String, code :String) : List<Clothes>
+    suspend fun queryClothes(
+        type: String,
+        color: String,
+        status: String,
+        code: String
+    ): List<Clothes>
+
+    @Query("SELECT COUNT(*) FROM clothes WHERE itemCode = :code")
+    suspend fun checkCode(code: String) = Int
 
 
 }

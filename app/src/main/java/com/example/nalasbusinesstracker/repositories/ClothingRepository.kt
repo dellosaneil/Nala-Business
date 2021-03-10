@@ -10,6 +10,7 @@ class ClothingRepository @Inject constructor(private val clothingDao : ClothesDa
     suspend fun retrieveAllClothing() = clothingDao.retrieveAllClothes()
     suspend fun deleteClothing(clothing: Clothes) = clothingDao.deleteClothing(clothing)
     suspend fun queryClothes(type : String, color : String, status : String, code :String) = clothingDao.queryClothes(type, color, status, code)
+    suspend fun checkCode(code : String)  = clothingDao.checkCode(code)
 
 
 

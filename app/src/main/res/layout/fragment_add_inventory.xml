@@ -37,7 +37,6 @@
             android:id="@+id/inventory_supplierName"
             layout="@layout/layout_edit_text" />
 
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/inventory_purchaseDate"
             style="?attr/materialButtonOutlinedStyle"
