@@ -9,12 +9,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.nalasbusinesstracker.R
 import com.example.nalasbusinesstracker.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked {
+class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked{
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -22,6 +23,27 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked {
     private val homeAdapter: HomeAdapter by lazy { HomeAdapter(this) }
     private val TAG = "HomeFragment"
 
+
+    private val scrollListener = object : RecyclerView.OnScrollListener(){
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+            if (dy > 0) {
+                binding.homeFragmentAdd.visibility = View.GONE
+            } else if (dy < 0) {
+                binding.homeFragmentAdd.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.homeFragmentRv.addOnScrollListener(scrollListener)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.homeFragmentRv.removeOnScrollListener(scrollListener)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

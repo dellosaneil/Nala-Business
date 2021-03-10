@@ -2,12 +2,12 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
     android:id="@+id/homeRV_container"
-    android:clickable="true"
-    android:focusable="true"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
+    android:clickable="true"
+    android:focusable="true"
     app:cardCornerRadius="8dp"
     app:cardElevation="8dp">
 
@@ -20,48 +20,52 @@
             android:layout_width="150dp"
             android:layout_height="175dp"
             android:layout_marginStart="4dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="4dp"
+            android:scaleType="fitCenter"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/homeRV_code"
             tools:ignore="ContentDescription"
             tools:src="@drawable/ic_cloth_100" />
+
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/homeRV_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textSize="12sp"
+            android:layout_marginTop="8dp"
+            android:textSize="16sp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/homeRV_image"
             app:layout_constraintStart_toStartOf="@+id/homeRV_image"
-            app:layout_constraintTop_toBottomOf="@+id/homeRV_image"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="CT-01" />
-
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/homeRV_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:textSize="12sp"
+            android:layout_marginEnd="4dp"
+            android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="@+id/homeRV_image"
             app:layout_constraintTop_toBottomOf="@+id/homeRV_image"
             tools:text="₱50.00" />
 
-
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/homeRV_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="23dp"
+            android:layout_marginTop="9dp"
+            android:layout_marginEnd="11dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/homeRV_price"
-            app:layout_constraintStart_toStartOf="@+id/homeRV_code"
-            app:layout_constraintTop_toBottomOf="@+id/homeRV_code"
+            app:layout_constraintEnd_toEndOf="@+id/homeRV_image"
+            app:layout_constraintStart_toStartOf="@+id/homeRV_image"
+            app:layout_constraintTop_toBottomOf="@+id/homeRV_price"
             tools:text="Status: Available" />
 
 
