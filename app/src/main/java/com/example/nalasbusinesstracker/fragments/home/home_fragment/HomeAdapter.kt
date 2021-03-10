@@ -1,7 +1,6 @@
 package com.example.nalasbusinesstracker.fragments.home.home_fragment
 
 import android.content.res.Resources
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,10 @@ import com.example.nalasbusinesstracker.R
 import com.example.nalasbusinesstracker.databinding.ListHomeBinding
 import com.example.nalasbusinesstracker.room.data_classes.Clothes
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.StorageException
+import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
+import java.lang.Exception
 
 class HomeAdapter(private val listener: HomeClothingClicked) :
     RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
@@ -74,7 +76,11 @@ class HomeAdapter(private val listener: HomeClothingClicked) :
             )
             val storageClothingReference =
                 Firebase.storage.getReferenceFromUrl("$FIREBASE_STORAGE_LINK${clothing.imageReference}")
+            placeImage(storageClothingReference)
 
+        }
+
+        private fun placeImage(storageClothingReference: StorageReference) {
             GlideApp.with(binding.root)
                 .load(storageClothingReference)
                 .fitCenter()

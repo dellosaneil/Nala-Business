@@ -2,11 +2,13 @@ package com.example.nalasbusinesstracker.fragments.home.add_inventory
 
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
 import android.text.InputType
-import android.util.Log
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
@@ -17,6 +19,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.createDataStore
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
 import com.example.nalasbusinesstracker.Constants.DATA_STORE_NAME
 import com.example.nalasbusinesstracker.Constants.LATEST_DATE_KEY
@@ -28,7 +31,6 @@ import com.example.nalasbusinesstracker.repositories.ClothingRepository
 import com.example.nalasbusinesstracker.room.data_classes.Clothes
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import dagger.hilt.android.AndroidEntryPoint
@@ -63,6 +65,7 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
     private var uriImage: Uri? = null
     private var datePurchased = 0L
     private var editTextArray = arrayOf<LayoutEditTextBinding>()
+    private var toast: Toast? = null
 
 
     @Inject
@@ -176,10 +179,10 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
             editTextArray[it].editTextLayout.hint = hintArray[it]
             editTextArray[it].editTextInput.inputType = typeArray[it]
         }
-        editTextListeners(editTextArray)
+        addTextListeners()
     }
 
-    private fun editTextListeners(editTextArray: Array<LayoutEditTextBinding>) {
+    private fun addTextListeners() {
         repeat(editTextArray.size) {
             editTextArray[it].editTextInput.doOnTextChanged { text, _, _, _ ->
                 text?.let { charSequence ->
@@ -194,6 +197,7 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
             }
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -250,6 +254,18 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    private fun handleToastMessage(message: String) {
+        toast?.let {
+            toast?.cancel()
+            toast = Toast.makeText(requireContext(), message, Toast.LENGTH_LONG)
+            toast!!.show()
+        } ?: run {
+            toast = Toast.makeText(requireContext(), message, Toast.LENGTH_LONG)
+            toast!!.show()
+        }
+    }
+
+
     private fun saveToInventory() {
         lifecycleScope.launch(IO) {
             if (checkValues()) {
@@ -267,12 +283,14 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
                     valuesArray[6] as String
                 )
                 repository.insertClothing(clothingData)
-                Log.i(TAG, "saveToInventory: ${STORAGE_PATH}${valuesArray[0]}")
+                withContext(Main) {
+                    handleToastMessage(getString(R.string.inventory_finished_upload))
+                    Navigation.findNavController(binding.root).navigateUp()
+                }
             }
         }
     }
 
-    private val TAG = "AddInventoryFragment"
 
     private suspend fun checkValues(): Boolean {
         var canSave = true
@@ -304,14 +322,18 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
             }
         }
         job.await()
-        if(uriImage == null){
+        if (uriImage == null) {
             canSave = false
         }
         return canSave
     }
 
-    private fun saveToStorage() {
+    private suspend fun saveToStorage() {
+        withContext(Main) {
+            handleToastMessage(getString(R.string.inventory_uploading))
+        }
         storage.child("${STORAGE_PATH}${valuesArray[0]}").putFile(uriImage!!)
+
     }
 }
 

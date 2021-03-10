@@ -8,7 +8,7 @@ import com.example.nalasbusinesstracker.room.dao.ClothesDao
 import com.example.nalasbusinesstracker.room.dao.ExpenseDao
 
 
-@Database(entities = [Clothes::class, Expenses::class], version = 1)
+@Database(entities = [Clothes::class, Expenses::class], version = 2)
 abstract class MyDatabase : RoomDatabase() {
     abstract fun clothesDao() : ClothesDao
     abstract fun expensesDao() : ExpenseDao

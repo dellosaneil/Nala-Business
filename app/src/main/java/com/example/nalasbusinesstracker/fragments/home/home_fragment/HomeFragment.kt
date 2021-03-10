@@ -1,5 +1,6 @@
 package com.example.nalasbusinesstracker.fragments.home.home_fragment
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -68,7 +69,8 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked{
     private fun initializeRecyclerView() {
         binding.homeFragmentRv.apply {
             adapter = homeAdapter
-            layoutManager = GridLayoutManager(requireContext(), 2)
+            val spanCount = if(resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 2 else 4
+            layoutManager = GridLayoutManager(requireContext(), spanCount)
         }
         observeAdapterChanges()
         observeQueryChanges()
@@ -86,6 +88,7 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked{
         homeViewModel.clothingList.observe(viewLifecycleOwner) {
             it?.let { clothes ->
                 homeAdapter.updateClothes(clothes)
+                binding.homeFragmentRv.smoothScrollToPosition(0)
             }
         }
     }

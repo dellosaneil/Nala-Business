@@ -10,6 +10,8 @@
     <string name="inventory_calendar">Purchase Date</string>
     <string name="inventory_required">Required Field</string>
     <string name="inventory_code_used">Item Code already used</string>
+    <string name="inventory_uploading">Uploading…</string>
+    <string name="inventory_finished_upload">Upload Finished.</string>
 
 
 </resources>
