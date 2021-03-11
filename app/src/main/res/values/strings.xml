@@ -13,5 +13,8 @@
     <string name="inventory_uploading">Uploading…</string>
     <string name="inventory_finished_upload">Upload Finished.</string>
 
+    <string name="homeMenu_searchViewTitle">Search Code</string>
+
+    <string name="home_searchViewHint">Search Item Code</string>
 
 </resources>
