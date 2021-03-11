@@ -55,6 +55,14 @@ class HomeViewModel @Inject constructor(private val clothingRepository: Clothing
             }
         }
     }
+
+    fun clearData(){
+        _clothingList.value = listOf()
+        _category.value = sortedSetOf()
+        _color.value = sortedSetOf()
+
+
+    }
 }
 
 

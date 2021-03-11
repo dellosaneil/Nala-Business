@@ -8,18 +8,21 @@ import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.nalasbusinesstracker.FragmentLifecycle
 import com.example.nalasbusinesstracker.R
 import com.example.nalasbusinesstracker.databinding.FragmentHomeBinding
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked,
+class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
     ChipGroup.OnCheckedChangeListener, SearchView.OnQueryTextListener {
 
     private var _binding: FragmentHomeBinding? = null
@@ -44,16 +47,16 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked,
         super.onViewCreated(view, savedInstanceState)
         initializeRecyclerView()
         floatingActionButton(view)
-        dynamicallyAllocateChips()
-        initializeSearchView()
+
     }
 
     private val TAG = "HomeFragment"
 
     override fun onStart() {
         super.onStart()
-        Log.i(TAG, "onStart: ")
         homeViewModel.initializeData()
+        attachChipGroupObservers()
+        initializeSearchView()
     }
 
     private fun initializeSearchView() {
@@ -76,35 +79,58 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked,
         }
     }
 
-
-    private fun dynamicallyAllocateChips() {
-        binding.homeFragmentCategoryGroup.setOnCheckedChangeListener(this)
-        binding.homeFragmentColorGroup.setOnCheckedChangeListener(this)
-        categoryArray.add("")
-        colorArray.add("")
-        val chipArrayValues = arrayOf(categoryArray, colorArray)
-        val chipGroup =
-            arrayOf(binding.homeFragmentCategoryGroup, binding.homeFragmentColorGroup)
-        val chips = arrayOf(homeViewModel.category, homeViewModel.color)
-        repeat(chips.size) { outerIndex ->
-            chips[outerIndex].observe(viewLifecycleOwner) { categoryList ->
-                categoryList?.let { chipNames ->
-                    repeat(chipNames.size) {
-                        Chip(requireContext()).apply {
-                            id = it
-                            isCheckable = true
-                            isChipIconVisible = false
-                            isCheckedIconVisible = false
-                            setChipBackgroundColorResource(R.color.mtrl_choice_chip_background_color)
-                            setRippleColorResource(R.color.mtrl_choice_chip_ripple_color)
-                            text = chipNames.elementAt(it)
-                            chipGroup[outerIndex].addView(this)
-                            chipArrayValues[outerIndex].add(chipNames.elementAt(it))
-                        }
-                    }
+    private val categoryObserver = Observer<SortedSet<String>> {
+        it?.let { category ->
+            repeat(category.size) {
+                Chip(requireContext()).apply {
+                    id = it
+                    isCheckable = true
+                    isChipIconVisible = false
+                    isCheckedIconVisible = false
+                    setChipBackgroundColorResource(R.color.mtrl_choice_chip_background_color)
+                    setRippleColorResource(R.color.mtrl_choice_chip_ripple_color)
+                    text = category.elementAt(it)
+                    binding.homeFragmentCategoryGroup.addView(this)
+                    categoryArray.add(category.elementAt(it))
                 }
             }
         }
+    }
+
+    private val colorObserver = Observer<SortedSet<String>> {
+        it?.let { color ->
+            repeat(color.size) {
+                Chip(requireContext()).apply {
+                    id = it
+                    isCheckable = true
+                    isChipIconVisible = false
+                    isCheckedIconVisible = false
+                    setChipBackgroundColorResource(R.color.mtrl_choice_chip_background_color)
+                    setRippleColorResource(R.color.mtrl_choice_chip_ripple_color)
+                    text = color.elementAt(it)
+                    binding.homeFragmentColorGroup.addView(this)
+                    colorArray.add(color.elementAt(it))
+                }
+            }
+        }
+    }
+
+    private fun removeChipGroupObservers(){
+        homeViewModel.category.removeObserver(categoryObserver)
+        homeViewModel.color.removeObserver(colorObserver)
+    }
+
+
+    private fun attachChipGroupObservers() {
+        binding.homeFragmentCategoryGroup.setOnCheckedChangeListener(this)
+        binding.homeFragmentColorGroup.setOnCheckedChangeListener(this)
+        homeViewModel.category.observe(viewLifecycleOwner, categoryObserver)
+        homeViewModel.color.observe(viewLifecycleOwner, colorObserver)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        removeChipGroupObservers()
     }
 
     override fun onResume() {
@@ -115,6 +141,9 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked,
     override fun onStop() {
         super.onStop()
         binding.homeFragmentRv.removeOnScrollListener(scrollListener)
+        colorArray.clear()
+        categoryArray.clear()
+        homeViewModel.clearData()
     }
 
 
@@ -149,7 +178,7 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked,
     }
 
     override fun clothingClicked(index: Int) {
-        
+
     }
 
     private fun calculateNumberColumns(
