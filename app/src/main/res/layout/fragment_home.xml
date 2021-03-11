@@ -26,30 +26,31 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/homeFragment_toolBar">
 
-        <LinearLayout
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/homeFragment_categoryGroup"
             android:layout_width="wrap_content"
-            android:orientation="vertical"
-            android:layout_height="match_parent">
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/homeFragment_categoryGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                app:singleLine="true"
-                app:singleSelection="true" />
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/homeFragment_colorGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                app:singleLine="true"
-                app:singleSelection="true" />
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            app:singleLine="true"
+            app:singleSelection="true" />
     </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:id="@+id/homeFragment_scrollViewColor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/homeFragment_scrollViewCategory">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/homeFragment_colorGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleLine="true"
+            app:singleSelection="true" />
+    </HorizontalScrollView>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/homeFragment_rv"
@@ -59,7 +60,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/homeFragment_scrollViewCategory"
+        app:layout_constraintTop_toBottomOf="@+id/homeFragment_scrollViewColor"
         tools:listitem="@layout/list_home" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

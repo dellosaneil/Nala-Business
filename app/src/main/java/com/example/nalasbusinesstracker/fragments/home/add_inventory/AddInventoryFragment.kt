@@ -270,8 +270,8 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
                 saveToStorage()
                 val clothingData = Clothes(
                     valuesArray[0].toString(),
-                    valuesArray[1].toString(),
-                    valuesArray[2].toString(),
+                    valuesArray[1].toString().capitalize(Locale.ROOT),
+                    valuesArray[2].toString().capitalize(Locale.ROOT),
                     valuesArray[3] as Double,
                     valuesArray[4] as Double,
                     datePurchased,

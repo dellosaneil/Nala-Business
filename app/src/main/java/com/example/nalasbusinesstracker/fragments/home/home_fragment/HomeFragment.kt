@@ -26,9 +26,9 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked,
     private val binding get() = _binding!!
     private val homeViewModel: HomeViewModel by viewModels()
     private val homeAdapter: HomeAdapter by lazy { HomeAdapter(this) }
-    private val TAG = "HomeFragment"
-    private var chipSelected = 0
-    private var filterArray = mutableListOf("", "", "")
+    private var chipCategorySelected = 0
+    private var chipColorSelected = 0
+    private var filterArray = mutableListOf("", "")
     private val categoryArray = mutableListOf<String>()
     private val colorArray = mutableListOf<String>()
 
@@ -46,6 +46,14 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked,
         floatingActionButton(view)
         dynamicallyAllocateChips()
         initializeSearchView()
+    }
+
+    private val TAG = "HomeFragment"
+
+    override fun onStart() {
+        super.onStart()
+        Log.i(TAG, "onStart: ")
+        homeViewModel.initializeData()
     }
 
     private fun initializeSearchView() {
@@ -71,8 +79,10 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked,
 
     private fun dynamicallyAllocateChips() {
         binding.homeFragmentCategoryGroup.setOnCheckedChangeListener(this)
+        binding.homeFragmentColorGroup.setOnCheckedChangeListener(this)
         categoryArray.add("")
         colorArray.add("")
+        val chipArrayValues = arrayOf(categoryArray, colorArray)
         val chipGroup =
             arrayOf(binding.homeFragmentCategoryGroup, binding.homeFragmentColorGroup)
         val chips = arrayOf(homeViewModel.category, homeViewModel.color)
@@ -89,7 +99,7 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked,
                             setRippleColorResource(R.color.mtrl_choice_chip_ripple_color)
                             text = chipNames.elementAt(it)
                             chipGroup[outerIndex].addView(this)
-                            categoryArray.add(chipNames.elementAt(it))
+                            chipArrayValues[outerIndex].add(chipNames.elementAt(it))
                         }
                     }
                 }
@@ -121,22 +131,13 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked,
             layoutManager = GridLayoutManager(requireContext(), spanCount)
         }
         observeAdapterChanges()
-        observeQueryChanges()
-    }
-
-    private fun observeQueryChanges() {
-        homeViewModel.queryValues.observe(viewLifecycleOwner) {
-            it?.let { queries ->
-                homeViewModel.queryClothes(queries[0], queries[1], queries[2], queries[3])
-                binding.homeFragmentRv.smoothScrollToPosition(0)
-            }
-        }
     }
 
     private fun observeAdapterChanges() {
         homeViewModel.clothingList.observe(viewLifecycleOwner) {
             it?.let { clothes ->
                 homeAdapter.updateClothes(clothes)
+                binding.homeFragmentRv.smoothScrollToPosition(0)
             }
         }
     }
@@ -148,7 +149,7 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked,
     }
 
     override fun clothingClicked(index: Int) {
-        Log.i(TAG, "clothingClicked: $index")
+        
     }
 
     private fun calculateNumberColumns(
@@ -159,15 +160,33 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked,
         return (screenWidthDp / 162 + 0.5).toInt()
     }
 
-    override fun onCheckedChanged(group: ChipGroup?, checkedId: Int) {
-        chipSelected = checkedId + 1
+    private fun updateCategoryFilter(checkedId: Int) {
+        chipCategorySelected = checkedId + 1
         homeViewModel.queryClothes(
-            categoryArray[chipSelected],
+            categoryArray[chipCategorySelected],
+            colorArray[chipColorSelected],
             filterArray[0],
-            filterArray[1],
-            filterArray[2]
+            filterArray[1]
         )
+    }
+
+    override fun onCheckedChanged(group: ChipGroup?, checkedId: Int) {
+        when (group?.id) {
+            R.id.homeFragment_categoryGroup -> updateCategoryFilter(checkedId)
+            R.id.homeFragment_colorGroup -> updateColorFilter(checkedId)
+        }
+
         binding.homeFragmentAdd.show()
+    }
+
+    private fun updateColorFilter(checkedId: Int) {
+        chipColorSelected = checkedId + 1
+        homeViewModel.queryClothes(
+            categoryArray[chipCategorySelected],
+            colorArray[chipColorSelected],
+            filterArray[0],
+            filterArray[1]
+        )
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
@@ -176,12 +195,12 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked,
 
     override fun onQueryTextChange(query: String?): Boolean {
         query?.let {
-            filterArray[2] = it
+            filterArray[1] = it
             homeViewModel.queryClothes(
-                categoryArray[chipSelected],
+                categoryArray[chipCategorySelected],
+                colorArray[chipColorSelected],
                 filterArray[0],
-                filterArray[1],
-                filterArray[2]
+                filterArray[1]
             )
             return true
         }
