@@ -17,7 +17,6 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.createDataStore
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
 import com.example.nalasbusinesstracker.Constants.DATA_STORE_NAME
 import com.example.nalasbusinesstracker.Constants.LATEST_DATE_KEY
@@ -25,6 +24,7 @@ import com.example.nalasbusinesstracker.Constants.STORAGE_PATH
 import com.example.nalasbusinesstracker.R
 import com.example.nalasbusinesstracker.databinding.FragmentAddInventoryBinding
 import com.example.nalasbusinesstracker.databinding.LayoutEditTextBinding
+import com.example.nalasbusinesstracker.databinding.LayoutExposedDropDownBinding
 import com.example.nalasbusinesstracker.repositories.ClothingRepository
 import com.example.nalasbusinesstracker.room.data_classes.Clothes
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -41,6 +41,7 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class AddInventoryFragment : Fragment(), View.OnClickListener {
@@ -59,10 +60,11 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         "imageUri"
     )
     private lateinit var storage: StorageReference
-    private val valuesArray = arrayOf<Any>("", "", "", 0.0, 0.0, 0.0, "")
+    private val valuesArray = arrayOf<Any>("", 0.0, 0.0, 0.0, "", "", "")
     private var uriImage: Uri? = null
     private var datePurchased = 0L
     private var editTextArray = arrayOf<LayoutEditTextBinding>()
+    private var exposedDropDownArray = arrayOf<LayoutExposedDropDownBinding>()
     private var toast: Toast? = null
 
 
@@ -86,7 +88,7 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initializeEditTextArray()
+        initializeViewArray()
         initializeEditText()
         setClickListeners()
         initializeDataStore()
@@ -96,16 +98,18 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         storage = Firebase.storage.reference
     }
 
-    private fun initializeEditTextArray() {
+
+    private fun initializeViewArray() {
         editTextArray = arrayOf(
             binding.inventoryItemCode,
-            binding.inventoryClothingType,
-            binding.inventoryDominantColor,
             binding.inventoryPurchasePrice,
             binding.inventorySellingPrice,
             binding.inventoryClothingSize,
             binding.inventorySupplierName
         )
+        exposedDropDownArray =
+            arrayOf(binding.inventoryClothingType, binding.inventoryDominantColor)
+
     }
 
 
@@ -163,20 +167,27 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
     }
 
     private fun initializeEditText() {
-        val hintArray = resources.getStringArray(R.array.inventory_hint)
-        val typeArray = arrayOf(
-            InputType.TYPE_CLASS_TEXT,
-            InputType.TYPE_CLASS_TEXT,
+        val editTextHint = resources.getStringArray(R.array.inventory_editText_hint)
+        val editTextInputType = arrayOf(
             InputType.TYPE_CLASS_TEXT,
             InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL,
             InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL,
             InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL,
             InputType.TYPE_CLASS_TEXT
         )
+        val exposedTextHint = resources.getStringArray(R.array.inventory_exposedMenu_hint)
+        val exposedTextInputType = arrayOf(InputType.TYPE_CLASS_TEXT, InputType.TYPE_CLASS_TEXT)
+
         repeat(editTextArray.size) {
-            editTextArray[it].editTextLayout.hint = hintArray[it]
-            editTextArray[it].editTextInput.inputType = typeArray[it]
+            editTextArray[it].editTextLayout.hint = editTextHint[it]
+            editTextArray[it].editTextInput.inputType = editTextInputType[it]
         }
+
+        repeat(exposedDropDownArray.size) {
+            exposedDropDownArray[it].exposedDropDownLayout.hint = exposedTextHint[it]
+            exposedDropDownArray[it].exposedDropDownTextView.inputType = exposedTextInputType[it]
+        }
+
         addTextListeners()
     }
 
@@ -192,6 +203,11 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
                         valuesArray[it] = temp
                     }
                 }
+            }
+        }
+        repeat(exposedDropDownArray.size) {
+            exposedDropDownArray[it].exposedDropDownTextView.doOnTextChanged { text, _, _, _ ->
+                valuesArray[it + 5] = text.toString()
             }
         }
     }
@@ -252,6 +268,7 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         }
     }
 
+
     private fun handleToastMessage(message: String) {
         toast?.let {
             toast?.cancel()
@@ -263,6 +280,9 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    private val String.capitalizeWords
+        get() = this.toLowerCase(Locale.ROOT).split(" ")
+            .joinToString(" ") { it.capitalize(Locale.ROOT) }
 
     private fun saveToInventory() {
         lifecycleScope.launch(IO) {
@@ -270,15 +290,15 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
                 saveToStorage()
                 val clothingData = Clothes(
                     valuesArray[0].toString(),
-                    valuesArray[1].toString().capitalize(Locale.ROOT),
-                    valuesArray[2].toString().capitalize(Locale.ROOT),
-                    valuesArray[3] as Double,
-                    valuesArray[4] as Double,
+                    valuesArray[5].toString().capitalizeWords,
+                    valuesArray[6].toString().capitalizeWords,
+                    valuesArray[1] as Double,
+                    valuesArray[2] as Double,
                     datePurchased,
                     "Available",
                     "${STORAGE_PATH}${valuesArray[0]}",
-                    valuesArray[5] as Double,
-                    valuesArray[6].toString()
+                    valuesArray[3] as Double,
+                    valuesArray[4].toString()
                 )
                 repository.insertClothing(clothingData)
                 withContext(Main) {

@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="inventory_hint">
+    <string-array name="inventory_editText_hint">
         <item>Item Code</item>
-        <item>Clothing Type</item>
-        <item>Dominant Color</item>
         <item>Purchase Price</item>
         <item>Selling Price</item>
         <item>Clothing Size</item>
         <item>Supplier Name</item>
+    </string-array>
+
+    <string-array name="inventory_exposedMenu_hint">
+                <item>Clothing Type</item>
+                <item>Dominant Color</item>
     </string-array>
 
 

@@ -1,27 +1,19 @@
 package com.example.nalasbusinesstracker.fragments.home.home_fragment
 
 import android.content.res.Resources
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.example.nalasbusinesstracker.Constants.FIREBASE_STORAGE_LINK
 import com.example.nalasbusinesstracker.GlideApp
 import com.example.nalasbusinesstracker.R
 import com.example.nalasbusinesstracker.databinding.ListHomeBinding
 import com.example.nalasbusinesstracker.room.data_classes.Clothes
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
-import java.lang.Exception
 
 class HomeAdapter(private val listener: HomeClothingClicked) :
     RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
@@ -93,7 +85,6 @@ class HomeAdapter(private val listener: HomeClothingClicked) :
                 .placeholder(R.drawable.ic_cloth_100)
                 .into(binding.homeRVImage)
         }
-
 
         override fun onClick(v: View?) {
             when (v?.id) {

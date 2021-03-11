@@ -50,8 +50,6 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
 
     }
 
-    private val TAG = "HomeFragment"
-
     override fun onStart() {
         super.onStart()
         homeViewModel.initializeData()
@@ -124,6 +122,8 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
     private fun attachChipGroupObservers() {
         binding.homeFragmentCategoryGroup.setOnCheckedChangeListener(this)
         binding.homeFragmentColorGroup.setOnCheckedChangeListener(this)
+        colorArray.add("")
+        categoryArray.add("")
         homeViewModel.category.observe(viewLifecycleOwner, categoryObserver)
         homeViewModel.color.observe(viewLifecycleOwner, colorObserver)
     }
