@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.*
 import javax.inject.Inject
 
 
@@ -20,6 +21,8 @@ class HomeViewModel @Inject constructor(private val clothingRepository: Clothing
 
     private val _clothingList = MutableLiveData<List<Clothes>>()
     var clothingList: LiveData<List<Clothes>> = _clothingList
+    private val _category = MutableLiveData<SortedSet<String>>()
+    var category : LiveData<SortedSet<String>> = _category
 
     private val _queryValues = MutableLiveData<List<String>>()
     var queryValues : LiveData<List<String>> = _queryValues
@@ -27,9 +30,12 @@ class HomeViewModel @Inject constructor(private val clothingRepository: Clothing
     init {
         viewModelScope.launch(IO) {
             val clothingTemp = clothingRepository.retrieveAllClothing()
+            val sortedSet = sortedSetOf<String>()
+            clothingTemp.forEach { sortedSet.add(it.clothingType) }
             withContext(Main) {
                 _clothingList.value = clothingTemp
                 _queryValues.value = listOf("","","","")
+                _category.value = sortedSet
             }
         }
     }

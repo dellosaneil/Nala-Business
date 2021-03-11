@@ -7,8 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.content.res.AppCompatResources.getDrawable
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
@@ -16,7 +14,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nalasbusinesstracker.R
 import com.example.nalasbusinesstracker.databinding.FragmentHomeBinding
-import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -43,34 +40,23 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked {
     }
 
     private fun addChips() {
-        val chipNames = arrayOf("Dress", "Shirt", "Polo", "Pants", "Chicken", "Woof")
-        repeat(chipNames.size) {
-            Chip(requireContext()).apply {
-                isCheckable = true
-                isChipIconVisible = false
-                isCheckedIconVisible = false
-                checkedIcon = getDrawable(requireContext(), R.drawable.ic_mtrl_chip_checked_black)
-                setChipBackgroundColorResource(R.color.mtrl_choice_chip_background_color)
-                setRippleColorResource(R.color.mtrl_choice_chip_ripple_color)
-                text = chipNames[it]
-                binding.homeFragmentChipGroup.addView(this)
+        homeViewModel.category.observe(viewLifecycleOwner){categoryList ->
+            categoryList?.let{ chipNames ->
+                repeat(chipNames.size) {
+                    Chip(requireContext()).apply {
+                        isCheckable = true
+                        isChipIconVisible = false
+                        isCheckedIconVisible = false
+                        setChipBackgroundColorResource(R.color.mtrl_choice_chip_background_color)
+                        setRippleColorResource(R.color.mtrl_choice_chip_ripple_color)
+                        text = chipNames.elementAt(it)
+                        binding.homeFragmentChipGroup.addView(this)
+                    }
+                }
             }
         }
+
     }
-
-//    <item name="android:checkable">true</item>
-//
-//    <item name="chipIconVisible">false</item>
-//    <item name="checkedIconVisible">false</item>
-//    <item name="closeIconVisible">false</item>
-//
-//    <item name="checkedIcon">@drawable/ic_mtrl_chip_checked_black</item>
-//
-//    <item name="android:textColor">@color/mtrl_choice_chip_text_color</item>
-//
-//    <item name="chipBackgroundColor">@color/mtrl_choice_chip_background_color</item>
-//    <item name="rippleColor">@color/mtrl_choice_chip_ripple_color</item>
-
 
     override fun onResume() {
         super.onResume()
