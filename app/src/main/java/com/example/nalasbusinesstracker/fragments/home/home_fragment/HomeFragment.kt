@@ -29,7 +29,8 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked,
     private val TAG = "HomeFragment"
     private var chipSelected = 0
     private var filterArray = mutableListOf("", "", "")
-    private val typeFilterArray = mutableListOf<String>()
+    private val categoryArray = mutableListOf<String>()
+    private val colorArray = mutableListOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,7 +44,7 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked,
         super.onViewCreated(view, savedInstanceState)
         initializeRecyclerView()
         floatingActionButton(view)
-        addChips()
+        dynamicallyAllocateChips()
         initializeSearchView()
     }
 
@@ -68,22 +69,28 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked,
     }
 
 
-    private fun addChips() {
-        binding.homeFragmentChipGroup.setOnCheckedChangeListener(this)
-        typeFilterArray.add("")
-        homeViewModel.category.observe(viewLifecycleOwner) { categoryList ->
-            categoryList?.let { chipNames ->
-                repeat(chipNames.size) {
-                    Chip(requireContext()).apply {
-                        id = it
-                        isCheckable = true
-                        isChipIconVisible = false
-                        isCheckedIconVisible = false
-                        setChipBackgroundColorResource(R.color.mtrl_choice_chip_background_color)
-                        setRippleColorResource(R.color.mtrl_choice_chip_ripple_color)
-                        text = chipNames.elementAt(it)
-                        binding.homeFragmentChipGroup.addView(this)
-                        typeFilterArray.add(chipNames.elementAt(it))
+    private fun dynamicallyAllocateChips() {
+        binding.homeFragmentCategoryGroup.setOnCheckedChangeListener(this)
+        categoryArray.add("")
+        colorArray.add("")
+        val chipGroup =
+            arrayOf(binding.homeFragmentCategoryGroup, binding.homeFragmentColorGroup)
+        val chips = arrayOf(homeViewModel.category, homeViewModel.color)
+        repeat(chips.size) { outerIndex ->
+            chips[outerIndex].observe(viewLifecycleOwner) { categoryList ->
+                categoryList?.let { chipNames ->
+                    repeat(chipNames.size) {
+                        Chip(requireContext()).apply {
+                            id = it
+                            isCheckable = true
+                            isChipIconVisible = false
+                            isCheckedIconVisible = false
+                            setChipBackgroundColorResource(R.color.mtrl_choice_chip_background_color)
+                            setRippleColorResource(R.color.mtrl_choice_chip_ripple_color)
+                            text = chipNames.elementAt(it)
+                            chipGroup[outerIndex].addView(this)
+                            categoryArray.add(chipNames.elementAt(it))
+                        }
                     }
                 }
             }
@@ -155,13 +162,12 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked,
     override fun onCheckedChanged(group: ChipGroup?, checkedId: Int) {
         chipSelected = checkedId + 1
         homeViewModel.queryClothes(
-            typeFilterArray[chipSelected],
+            categoryArray[chipSelected],
+            filterArray[0],
             filterArray[1],
-            filterArray[2],
-            filterArray[3]
+            filterArray[2]
         )
         binding.homeFragmentAdd.show()
-
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
@@ -171,7 +177,12 @@ class HomeFragment : Fragment(), HomeAdapter.HomeClothingClicked,
     override fun onQueryTextChange(query: String?): Boolean {
         query?.let {
             filterArray[2] = it
-            homeViewModel.queryClothes(typeFilterArray[chipSelected], filterArray[0], filterArray[1], filterArray[2])
+            homeViewModel.queryClothes(
+                categoryArray[chipSelected],
+                filterArray[0],
+                filterArray[1],
+                filterArray[2]
+            )
             return true
         }
         return false

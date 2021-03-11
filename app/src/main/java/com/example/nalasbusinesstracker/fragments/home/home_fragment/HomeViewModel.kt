@@ -23,6 +23,8 @@ class HomeViewModel @Inject constructor(private val clothingRepository: Clothing
     var clothingList: LiveData<List<Clothes>> = _clothingList
     private val _category = MutableLiveData<SortedSet<String>>()
     var category : LiveData<SortedSet<String>> = _category
+    private val _color = MutableLiveData<SortedSet<String>>()
+    var color : LiveData<SortedSet<String>> = _color
 
     private val _queryValues = MutableLiveData<List<String>>()
     var queryValues : LiveData<List<String>> = _queryValues
@@ -30,12 +32,17 @@ class HomeViewModel @Inject constructor(private val clothingRepository: Clothing
     init {
         viewModelScope.launch(IO) {
             val clothingTemp = clothingRepository.retrieveAllClothing()
-            val sortedSet = sortedSetOf<String>()
-            clothingTemp.forEach { sortedSet.add(it.clothingType) }
+            val categorySet = sortedSetOf<String>()
+            val colorSet = sortedSetOf<String>()
+            clothingTemp.forEach {
+                categorySet.add(it.clothingType)
+                colorSet.add(it.dominantColor)
+            }
             withContext(Main) {
                 _clothingList.value = clothingTemp
                 _queryValues.value = listOf("","","","")
-                _category.value = sortedSet
+                _category.value = categorySet
+                _color.value = colorSet
             }
         }
     }
