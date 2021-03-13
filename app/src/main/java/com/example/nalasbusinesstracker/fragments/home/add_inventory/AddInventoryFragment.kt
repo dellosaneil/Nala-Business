@@ -47,20 +47,25 @@ import javax.inject.Inject
 class AddInventoryFragment : Fragment(), View.OnClickListener {
     private var _binding: FragmentAddInventoryBinding? = null
     private val binding get() = _binding!!
-    private lateinit var dataStore: DataStore<Preferences>
-    private lateinit var dateKey: Preferences.Key<Long>
+    private val dataStore: DataStore<Preferences> by lazy {
+        requireContext().createDataStore(
+            DATA_STORE_NAME
+        )
+    }
+    private val dateKey: Preferences.Key<Long> by lazy { longPreferencesKey(LATEST_DATE_KEY) }
     private val bundleArray = arrayOf(
         "itemCode",
         "clothingType",
         "dominantColor",
+        "supplierName",
         "purchasePrice",
         "sellingPrice",
         "clothingSize",
-        "supplierName",
         "imageUri"
     )
-    private lateinit var storage: StorageReference
-    private val valuesArray = arrayOf<Any>("", 0.0, 0.0, 0.0, "", "", "")
+    private val storage: StorageReference by lazy { Firebase.storage.reference }
+
+    private val userInputArray = arrayOf<Any>("", 0.0, 0.0, 0.0, "", "", "")
     private var uriImage: Uri? = null
     private var datePurchased = 0L
     private var editTextArray = arrayOf<LayoutEditTextBinding>()
@@ -91,11 +96,10 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         initializeViewArray()
         initializeEditText()
         setClickListeners()
-        initializeDataStore()
+        restorePreviousDate()
         savedInstanceState?.let {
             retrieveFromConfigurationChange(it)
         }
-        storage = Firebase.storage.reference
     }
 
 
@@ -104,24 +108,21 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
             binding.inventoryItemCode,
             binding.inventoryPurchasePrice,
             binding.inventorySellingPrice,
-            binding.inventoryClothingSize,
-            binding.inventorySupplierName
+            binding.inventoryClothingSize
         )
         exposedDropDownArray =
-            arrayOf(binding.inventoryClothingType, binding.inventoryDominantColor)
-
+            arrayOf(
+                binding.inventoryClothingType,
+                binding.inventoryDominantColor,
+                binding.inventorySupplierName
+            )
     }
 
 
     private fun retrieveFromConfigurationChange(savedInstanceState: Bundle) {
         repeat(editTextArray.size) {
-            try {
-                val temp = savedInstanceState.getDouble(bundleArray[it])
-                editTextArray[it].editTextInput.setText(temp.toString())
-            } catch (e: ClassCastException) {
-                val temp = savedInstanceState.getString(bundleArray[it])
-                editTextArray[it].editTextInput.setText(temp)
-            }
+            val temp = savedInstanceState.getDouble(bundleArray[it])
+            editTextArray[it].editTextInput.setText(temp.toString())
         }
         savedInstanceState.getParcelable<Uri>(bundleArray[6])?.let {
             insertImage(it)
@@ -132,23 +133,16 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         super.onSaveInstanceState(outState)
         repeat(bundleArray.size - 1) {
             try {
-                val temp = valuesArray[it] as Double
+                val temp = userInputArray[it] as Double
                 outState.putDouble(bundleArray[it], temp)
             } catch (e: ClassCastException) {
-                val temp = valuesArray[it] as String
+                val temp = userInputArray[it] as String
                 outState.putString(bundleArray[it], temp)
             }
         }
         uriImage?.let {
             outState.putParcelable(bundleArray[6], it)
         }
-    }
-
-
-    private fun initializeDataStore() {
-        dataStore = requireContext().createDataStore(DATA_STORE_NAME)
-        dateKey = longPreferencesKey(LATEST_DATE_KEY)
-        restorePreviousDate()
     }
 
     private fun restorePreviousDate() {
@@ -173,10 +167,9 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
             InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL,
             InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL,
             InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL,
-            InputType.TYPE_CLASS_TEXT
         )
         val exposedTextHint = resources.getStringArray(R.array.inventory_exposedMenu_hint)
-        val exposedTextInputType = arrayOf(InputType.TYPE_CLASS_TEXT, InputType.TYPE_CLASS_TEXT)
+        val exposedTextInputType = arrayOf(InputType.TYPE_CLASS_TEXT, InputType.TYPE_CLASS_TEXT, InputType.TYPE_CLASS_TEXT)
 
         repeat(editTextArray.size) {
             editTextArray[it].editTextLayout.hint = editTextHint[it]
@@ -187,7 +180,6 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
             exposedDropDownArray[it].exposedDropDownLayout.hint = exposedTextHint[it]
             exposedDropDownArray[it].exposedDropDownTextView.inputType = exposedTextInputType[it]
         }
-
         addTextListeners()
     }
 
@@ -197,17 +189,17 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
                 text?.let { charSequence ->
                     try {
                         val temp = charSequence.toString().toDouble()
-                        valuesArray[it] = temp
+                        userInputArray[it] = temp
                     } catch (e: Exception) {
                         val temp = charSequence.toString()
-                        valuesArray[it] = temp
+                        userInputArray[it] = temp
                     }
                 }
             }
         }
         repeat(exposedDropDownArray.size) {
             exposedDropDownArray[it].exposedDropDownTextView.doOnTextChanged { text, _, _, _ ->
-                valuesArray[it + 5] = text.toString()
+                userInputArray[it + 4] = text.toString()
             }
         }
     }
@@ -289,16 +281,16 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
             if (checkValues()) {
                 saveToStorage()
                 val clothingData = Clothes(
-                    valuesArray[0].toString(),
-                    valuesArray[5].toString().capitalizeWords,
-                    valuesArray[6].toString().capitalizeWords,
-                    valuesArray[1] as Double,
-                    valuesArray[2] as Double,
+                    userInputArray[0].toString(),
+                    userInputArray[4].toString().capitalizeWords,
+                    userInputArray[5].toString().capitalizeWords,
+                    userInputArray[1] as Double,
+                    userInputArray[2] as Double,
                     datePurchased,
                     "Available",
-                    "${STORAGE_PATH}${valuesArray[0]}",
-                    valuesArray[3] as Double,
-                    valuesArray[4].toString()
+                    "${STORAGE_PATH}${userInputArray[0]}",
+                    userInputArray[3] as Double,
+                    userInputArray[6].toString()
                 )
                 repository.insertClothing(clothingData)
                 withContext(Main) {
@@ -310,14 +302,18 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
     }
 
     private fun clearValues() {
-        val initialValues = arrayOf("", "", "", 0.0, 0.0, 0.0, "")
+        val initialValues = arrayOf("", 0.0, 0.0, 0.0, "", "", "")
         repeat(initialValues.size) {
-            valuesArray[it] = initialValues[it]
+            userInputArray[it] = initialValues[it]
         }
         uriImage = null
         repeat(editTextArray.size) {
             editTextArray[it].editTextInput.text = null
         }
+        repeat(exposedDropDownArray.size){
+            exposedDropDownArray[it].exposedDropDownTextView.text = null
+        }
+
         binding.inventoryImage.setImageDrawable(null)
         binding.inventoryImage.setBackgroundColor(
             ContextCompat.getColor(
@@ -368,7 +364,7 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         withContext(Main) {
             handleToastMessage(getString(R.string.inventory_uploading))
         }
-        storage.child("${STORAGE_PATH}${valuesArray[0]}").putFile(uriImage!!)
+        storage.child("${STORAGE_PATH}${userInputArray[0]}").putFile(uriImage!!)
 
     }
 

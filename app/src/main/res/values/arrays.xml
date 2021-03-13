@@ -5,12 +5,12 @@
         <item>Purchase Price</item>
         <item>Selling Price</item>
         <item>Clothing Size</item>
-        <item>Supplier Name</item>
     </string-array>
 
     <string-array name="inventory_exposedMenu_hint">
                 <item>Clothing Type</item>
                 <item>Dominant Color</item>
+                <item>Supplier Name</item>
     </string-array>
 
 

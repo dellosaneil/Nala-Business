@@ -23,6 +23,10 @@
         <include android:id="@+id/inventory_dominantColor"
             layout="@layout/layout_exposed_drop_down"/>
 
+        <include android:id="@+id/inventory_supplierName"
+            layout="@layout/layout_exposed_drop_down"/>
+
+
         <include
             android:id="@+id/inventory_purchasePrice"
             layout="@layout/layout_edit_text" />
@@ -35,9 +39,6 @@
             android:id="@+id/inventory_clothingSize"
             layout="@layout/layout_edit_text" />
 
-        <include
-            android:id="@+id/inventory_supplierName"
-            layout="@layout/layout_edit_text" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/inventory_purchaseDate"
