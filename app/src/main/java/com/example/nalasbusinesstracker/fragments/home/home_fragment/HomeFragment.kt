@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.LayoutInflaterCompat
@@ -37,6 +38,7 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
     private val categoryArray = mutableListOf<String>()
     private val colorArray = mutableListOf<String>()
     private var currentList = listOf<Clothes>()
+    private var alertDialogClothing: Clothes? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,7 +52,6 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
         super.onViewCreated(view, savedInstanceState)
         initializeRecyclerView()
         floatingActionButton(view)
-
     }
 
     override fun onStart() {
@@ -116,7 +117,7 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
         }
     }
 
-    private fun removeChipGroupObservers(){
+    private fun removeChipGroupObservers() {
         homeViewModel.category.removeObserver(categoryObserver)
         homeViewModel.color.removeObserver(colorObserver)
     }
@@ -184,8 +185,9 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
     }
 
     override fun clothingClicked(index: Int) {
-        val dialog = HomeDialogFragment(currentList[index])
-        fragmentManager?.let { dialog.show(it, "Tag") }
+        alertDialogClothing = currentList[index]
+        val dialog = HomeDialogFragment(alertDialogClothing)
+        dialog.show(requireParentFragment().parentFragmentManager, "Tag")
     }
 
     private fun calculateNumberColumns(

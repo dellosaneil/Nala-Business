@@ -3,8 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="344dp"
-    android:layout_height="148dp"
+    android:layout_height="wrap_content"
     app:cardCornerRadius="8dp">
+
+    <!--    android:layout_width="344dp"-->
+    <!--    android:layout_height="148dp"-->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -35,6 +38,35 @@
             app:layout_constraintTop_toTopOf="@+id/homeDialog_itemCode"
             tools:text="Clothing Type" />
 
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/homeDialog_clothingSize"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/rubik"
+            app:layout_constraintEnd_toStartOf="@+id/homeDialog_image"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/homeDialog_clothingType"
+            app:layout_constraintTop_toBottomOf="@+id/homeDialog_clothingType"
+            tools:text="Clothing Size" />
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/homeDialog_clothingSellPrice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/rubik"
+            app:layout_constraintEnd_toStartOf="@+id/homeDialog_image"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/homeDialog_clothingSize"
+            app:layout_constraintTop_toBottomOf="@+id/homeDialog_clothingSize"
+            tools:text="Selling Price" />
+
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/homeDialog_sold"
             style="?attr/materialButtonOutlinedStyle"
@@ -43,10 +75,12 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
             android:padding="0dp"
-            android:text="@string/home_markAsSold"
+            android:text="@string/homeDialog_sold"
             android:textAllCaps="false"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/homeDialog_clothingType" />
+            app:layout_constraintTop_toBottomOf="@+id/homeDialog_clothingSellPrice"
+            app:layout_constraintVertical_bias="0.0" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/homeDialog_edit"
@@ -55,18 +89,24 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:padding="0dp"
-            android:text="@string/home_edit"
+            android:text="@string/homeDialog_edit"
             android:textAllCaps="false"
+            app:layout_constraintEnd_toStartOf="@+id/homeDialog_image"
+            app:layout_constraintHorizontal_bias="0.176"
             app:layout_constraintStart_toEndOf="@+id/homeDialog_sold"
             app:layout_constraintTop_toTopOf="@+id/homeDialog_sold" />
+
+
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/homeDialog_image"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/homeDialog_itemCode"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.235"
             tools:src="@drawable/ic_cloth_100" />
 
 
