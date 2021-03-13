@@ -11,6 +11,7 @@ class ClothingRepository @Inject constructor(private val clothingDao : ClothesDa
     suspend fun deleteClothing(clothing: Clothes) = clothingDao.deleteClothing(clothing)
     suspend fun queryClothes(type : String, color : String, status : String, code :String) = clothingDao.queryClothes(type, color, status, code)
     suspend fun checkCode(code : String)  = clothingDao.checkCode(code)
+    suspend fun updateStatus(status: String, code : String) = clothingDao.updateStatus(status, code)
 
     fun getDistinctClothingType() = clothingDao.getDistinctClothingType()
     fun getDistinctDominantColor() = clothingDao.getDistinctDominantColor()

@@ -1,23 +1,34 @@
 package com.example.nalasbusinesstracker.fragments.home.home_fragment
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
 import com.example.nalasbusinesstracker.Constants
 import com.example.nalasbusinesstracker.GlideApp
 import com.example.nalasbusinesstracker.R
 import com.example.nalasbusinesstracker.databinding.DialogHomeBinding
+import com.example.nalasbusinesstracker.repositories.ClothingRepository
 import com.example.nalasbusinesstracker.room.data_classes.Clothes
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeDialogFragment(private val clothingDetails : Clothes? = null) : DialogFragment() {
+@AndroidEntryPoint
+class HomeDialogFragment(private val clothingDetails : Clothes? = null) : DialogFragment(), View.OnClickListener {
 
     private var _binding: DialogHomeBinding? = null
     private val binding get() = _binding!!
     private var clothingCopy : Clothes? = null
     private val outStateKey = "clothingKey"
+    @Inject
+    lateinit var clothingRepository: ClothingRepository
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,9 +46,15 @@ class HomeDialogFragment(private val clothingDetails : Clothes? = null) : Dialog
         } ?: savedInstanceState?.let{
             clothingCopy = it.getParcelable(outStateKey)
         }
-
-
         placeValues()
+        listenClickEvents()
+
+
+    }
+
+    private fun listenClickEvents() {
+        binding.homeDialogSold.setOnClickListener(this)
+        binding.homeDialogEdit.setOnClickListener(this)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -70,4 +87,23 @@ class HomeDialogFragment(private val clothingDetails : Clothes? = null) : Dialog
         _binding = null
     }
 
+    override fun onClick(v: View?) {
+        when(v?.id){
+            R.id.homeDialog_sold -> updateCurrentStatus()
+            R.id.homeDialog_edit -> editClothing()
+        }
+    }
+
+    private fun editClothing() {
+
+    }
+
+    private fun updateCurrentStatus() {
+        lifecycleScope.launch(IO){
+            clothingCopy?.let{
+                clothingRepository.updateStatus("Sold", it.itemCode)
+                this@HomeDialogFragment.dismiss()
+            }
+        }
+    }
 }

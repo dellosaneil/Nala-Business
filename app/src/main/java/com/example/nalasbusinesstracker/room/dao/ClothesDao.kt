@@ -27,6 +27,10 @@ interface ClothesDao {
         code: String
     ): List<Clothes>
 
+    @Query("UPDATE clothes SET currentStatus = :status WHERE itemCode = :code")
+    suspend fun updateStatus(status : String, code : String)
+
+
     @Query("SELECT COUNT(*) FROM clothes WHERE itemCode = :code")
     suspend fun checkCode(code: String) : Int
 
