@@ -1,10 +1,13 @@
 package com.example.nalasbusinesstracker.fragments.home.home_fragment
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.*
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.LayoutInflaterCompat
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
@@ -13,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.nalasbusinesstracker.FragmentLifecycle
 import com.example.nalasbusinesstracker.R
 import com.example.nalasbusinesstracker.databinding.FragmentHomeBinding
+import com.example.nalasbusinesstracker.room.data_classes.Clothes
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,6 +36,7 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
     private var filterArray = mutableListOf("", "")
     private val categoryArray = mutableListOf<String>()
     private val colorArray = mutableListOf<String>()
+    private var currentList = listOf<Clothes>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -163,6 +168,7 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
     private fun observeAdapterChanges() {
         homeViewModel.clothingList.observe(viewLifecycleOwner) {
             it?.let { clothes ->
+                currentList = clothes
                 homeAdapter.updateClothes(clothes)
                 binding.homeFragmentRv.smoothScrollToPosition(0)
             }
@@ -172,11 +178,14 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
 
     override fun onDestroyView() {
         super.onDestroyView()
+        chipCategorySelected = 0
+        chipColorSelected = 0
         _binding = null
     }
 
     override fun clothingClicked(index: Int) {
-
+        val dialog = HomeDialogFragment(currentList[index])
+        fragmentManager?.let { dialog.show(it, "Tag") }
     }
 
     private fun calculateNumberColumns(
@@ -234,3 +243,16 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
         return false
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

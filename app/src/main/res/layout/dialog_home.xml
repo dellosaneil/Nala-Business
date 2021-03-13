@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="344dp"
+    android:layout_height="148dp"
+    app:cardCornerRadius="8dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/homeDialog_itemCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/rubik"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="TV-1032" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/homeDialog_clothingType"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/rubik"
+            app:layout_constraintEnd_toStartOf="@+id/homeDialog_image"
+            app:layout_constraintStart_toStartOf="@+id/homeDialog_itemCode"
+            app:layout_constraintTop_toTopOf="@+id/homeDialog_itemCode"
+            tools:text="Clothing Type" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/homeDialog_sold"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:padding="0dp"
+            android:text="@string/home_markAsSold"
+            android:textAllCaps="false"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/homeDialog_clothingType" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/homeDialog_edit"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:padding="0dp"
+            android:text="@string/home_edit"
+            android:textAllCaps="false"
+            app:layout_constraintStart_toEndOf="@+id/homeDialog_sold"
+            app:layout_constraintTop_toTopOf="@+id/homeDialog_sold" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/homeDialog_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/homeDialog_itemCode"
+            tools:src="@drawable/ic_cloth_100" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</com.google.android.material.card.MaterialCardView>

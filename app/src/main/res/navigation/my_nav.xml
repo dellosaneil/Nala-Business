@@ -13,6 +13,9 @@
         <action
             android:id="@+id/home_addInventory"
             app:destination="@id/addInventoryFragment" />
+        <action
+            android:id="@+id/home_inventoryDetails"
+            app:destination="@id/inventoryDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/addInventoryFragment"
@@ -59,4 +62,9 @@
         android:name="com.example.nalasbusinesstracker.fragments.graphs.PieChartFragment"
         android:label="fragment_pie_chart"
         tools:layout="@layout/fragment_pie_chart" />
+    <fragment
+        android:id="@+id/inventoryDetailsFragment"
+        android:name="com.example.nalasbusinesstracker.fragments.home.inventory_details.InventoryDetailsFragment"
+        android:label="fragment_inventory_details"
+        tools:layout="@layout/fragment_inventory_details" />
 </navigation>

@@ -12,9 +12,12 @@
     <string name="inventory_code_used">Item Code already used</string>
     <string name="inventory_uploading">Uploading…</string>
     <string name="inventory_finished_upload">Upload Finished.</string>
+    <string name="inventory_toolbarTitle">Add New Clothing</string>
 
     <string name="homeMenu_searchViewTitle">Search Code</string>
 
     <string name="home_searchViewHint">Search Item Code</string>
+    <string name="home_markAsSold">Mark as Sold</string>
+    <string name="home_edit">Edit Clothing</string>
 
 </resources>

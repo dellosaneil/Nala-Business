@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="36dp"
     tools:context=".fragments.home.add_inventory.AddInventoryFragment">
 
     <LinearLayout
@@ -13,18 +12,28 @@
         android:gravity="center"
         android:orientation="vertical">
 
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/inventory_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_back_24"
+            app:title="@string/inventory_toolbarTitle" />
+
         <include
             android:id="@+id/inventory_itemCode"
             layout="@layout/layout_edit_text" />
 
-        <include android:id="@+id/inventory_clothingType"
+        <include
+            android:id="@+id/inventory_clothingType"
             layout="@layout/layout_exposed_drop_down" />
 
-        <include android:id="@+id/inventory_dominantColor"
-            layout="@layout/layout_exposed_drop_down"/>
+        <include
+            android:id="@+id/inventory_dominantColor"
+            layout="@layout/layout_exposed_drop_down" />
 
-        <include android:id="@+id/inventory_supplierName"
-            layout="@layout/layout_exposed_drop_down"/>
+        <include
+            android:id="@+id/inventory_supplierName"
+            layout="@layout/layout_exposed_drop_down" />
 
 
         <include
@@ -46,11 +55,11 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginStart="56dp"
-            android:textSize="14sp"
             android:layout_marginEnd="56dp"
             android:drawableEnd="@drawable/ic_calendar_24"
             android:gravity="start|center_vertical"
-            android:hint="@string/inventory_calendar" />
+            android:hint="@string/inventory_calendar"
+            android:textSize="14sp" />
 
         <ImageButton
             android:id="@+id/inventory_image"

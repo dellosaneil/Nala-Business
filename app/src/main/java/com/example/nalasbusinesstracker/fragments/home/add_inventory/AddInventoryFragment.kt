@@ -19,6 +19,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.createDataStore
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
 import com.example.nalasbusinesstracker.Constants.DATA_STORE_NAME
 import com.example.nalasbusinesstracker.Constants.LATEST_DATE_KEY
@@ -93,8 +94,6 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         }
     }
 
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -110,10 +109,14 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         initializeEditText()
         setClickListeners()
         restorePreviousDate()
-        savedInstanceState?.let {
-            retrieveFromConfigurationChange(it)
-        }
         initializeDropDownMenu()
+        listenToNavigationIcon(view)
+    }
+
+    private fun listenToNavigationIcon(view: View) {
+        binding.inventoryToolbar.setNavigationOnClickListener {
+            Navigation.findNavController(view).navigateUp()
+        }
     }
 
 
@@ -130,33 +133,6 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
                 binding.inventoryDominantColor,
                 binding.inventorySupplierName
             )
-    }
-
-
-    private fun retrieveFromConfigurationChange(savedInstanceState: Bundle) {
-        repeat(editTextArray.size) {
-            val temp = savedInstanceState.getDouble(bundleArray[it])
-            editTextArray[it].editTextInput.setText(temp.toString())
-        }
-        savedInstanceState.getParcelable<Uri>(bundleArray[6])?.let {
-            insertImage(it)
-        }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        repeat(bundleArray.size - 1) {
-            try {
-                val temp = userInputArray[it] as Double
-                outState.putDouble(bundleArray[it], temp)
-            } catch (e: ClassCastException) {
-                val temp = userInputArray[it] as String
-                outState.putString(bundleArray[it], temp)
-            }
-        }
-        uriImage?.let {
-            outState.putParcelable(bundleArray[6], it)
-        }
     }
 
     private fun restorePreviousDate() {
