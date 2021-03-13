@@ -12,6 +12,11 @@ class ClothingRepository @Inject constructor(private val clothingDao : ClothesDa
     suspend fun queryClothes(type : String, color : String, status : String, code :String) = clothingDao.queryClothes(type, color, status, code)
     suspend fun checkCode(code : String)  = clothingDao.checkCode(code)
 
+    fun getDistinctClothingType() = clothingDao.getDistinctClothingType()
+    fun getDistinctDominantColor() = clothingDao.getDistinctDominantColor()
+    fun getDistinctSupplierName() = clothingDao.getDistinctSupplierName()
+
+
 
 
 }

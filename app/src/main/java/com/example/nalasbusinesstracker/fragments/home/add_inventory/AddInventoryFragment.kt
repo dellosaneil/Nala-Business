@@ -6,6 +6,8 @@ import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -72,7 +74,6 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
     private var exposedDropDownArray = arrayOf<LayoutExposedDropDownBinding>()
     private var toast: Toast? = null
 
-
     @Inject
     lateinit var repository: ClothingRepository
 
@@ -81,6 +82,18 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
             insertImage(it)
         }
     }
+
+    private fun initializeDropDownMenu(){
+        val items = listOf(repository.getDistinctClothingType(), repository.getDistinctDominantColor(), repository.getDistinctSupplierName())
+        repeat(exposedDropDownArray.size){indexNumber ->
+            items[indexNumber].observe(viewLifecycleOwner){
+                val adapter = ArrayAdapter(requireContext(), R.layout.list_item, it)
+                (exposedDropDownArray[indexNumber].exposedDropDownLayout.editText as? AutoCompleteTextView)?.setAdapter(adapter)
+            }
+        }
+    }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -100,6 +113,7 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         savedInstanceState?.let {
             retrieveFromConfigurationChange(it)
         }
+        initializeDropDownMenu()
     }
 
 
@@ -204,12 +218,6 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         }
     }
 
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.inventory_save -> saveToInventory()
@@ -301,6 +309,19 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         }
     }
 
+//    val itemCode: String,
+//    val clothingType: String,
+//    val dominantColor: String,
+//    val purchasePrice: Double,
+//    val sellingPrice : Double,
+//    val purchaseDate: Long,
+//    val currentStatus: String,
+//    val imageReference: String,
+//    val clothingSize : Double,
+//    val supplierName: String? = null,
+//    val storageTime : Long = System.currentTimeMillis()
+
+
     private fun clearValues() {
         val initialValues = arrayOf("", 0.0, 0.0, 0.0, "", "", "")
         repeat(initialValues.size) {
@@ -367,6 +388,14 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         storage.child("${STORAGE_PATH}${userInputArray[0]}").putFile(uriImage!!)
 
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+
+
 
 }
 

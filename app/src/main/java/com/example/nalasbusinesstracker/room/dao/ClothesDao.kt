@@ -1,5 +1,6 @@
 package com.example.nalasbusinesstracker.room.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -28,6 +29,16 @@ interface ClothesDao {
 
     @Query("SELECT COUNT(*) FROM clothes WHERE itemCode = :code")
     suspend fun checkCode(code: String) : Int
+
+    @Query("SELECT DISTINCT clothingType FROM clothes ORDER BY storageTime")
+    fun getDistinctClothingType() : LiveData<List<String>>
+
+    @Query("SELECT DISTINCT dominantColor FROM clothes ORDER BY storageTime")
+    fun getDistinctDominantColor() : LiveData<List<String>>
+
+    @Query("SELECT DISTINCT supplierName FROM clothes ORDER BY storageTime")
+    fun getDistinctSupplierName() : LiveData<List<String>>
+
 
 
 }
