@@ -43,6 +43,4 @@ interface ClothesDao {
     @Query("SELECT DISTINCT supplierName FROM clothes ORDER BY storageTime")
     fun getDistinctSupplierName() : Flow<List<String>>
 
-
-
 }

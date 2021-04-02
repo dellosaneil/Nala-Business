@@ -3,6 +3,7 @@ package com.example.nalasbusinesstracker.fragments.home.add_inventory
 import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,6 +39,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -46,6 +48,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
+
+private const val TAG = "AddInventoryFragment"
 
 @AndroidEntryPoint
 class AddInventoryFragment : Fragment(), View.OnClickListener {
@@ -85,16 +89,22 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun initializeDropDownMenu(){
-        lifecycleScope.launch(Main){
-            val items = listOf(repository.getDistinctClothingType(), repository.getDistinctDominantColor(), repository.getDistinctSupplierName())
-            repeat(exposedDropDownArray.size){indexNumber ->
-                items[indexNumber].collect{
-                    val adapter = ArrayAdapter(requireContext(), R.layout.list_item, it)
-                    (exposedDropDownArray[indexNumber].exposedDropDownLayout.editText as? AutoCompleteTextView)?.setAdapter(adapter)
+    private fun initializeDropDownMenu() {
+            val items = listOf(
+                repository.getDistinctClothingType(),
+                repository.getDistinctDominantColor(),
+                repository.getDistinctSupplierName()
+            )
+            repeat(items.size) { indexNumber ->
+                lifecycleScope.launch(Main) {
+                    items[indexNumber].collect {
+                        val adapter = ArrayAdapter(requireContext(), R.layout.list_item, it)
+                        (exposedDropDownArray[indexNumber].exposedDropDownLayout.editText as? AutoCompleteTextView)?.setAdapter(
+                            adapter
+                        )
+                    }
                 }
             }
-        }
     }
 
     override fun onCreateView(
@@ -162,7 +172,8 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
             InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL,
         )
         val exposedTextHint = resources.getStringArray(R.array.inventory_exposedMenu_hint)
-        val exposedTextInputType = arrayOf(InputType.TYPE_CLASS_TEXT, InputType.TYPE_CLASS_TEXT, InputType.TYPE_CLASS_TEXT)
+        val exposedTextInputType =
+            arrayOf(InputType.TYPE_CLASS_TEXT, InputType.TYPE_CLASS_TEXT, InputType.TYPE_CLASS_TEXT)
 
         repeat(editTextArray.size) {
             editTextArray[it].editTextLayout.hint = editTextHint[it]
@@ -310,7 +321,7 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         repeat(editTextArray.size) {
             editTextArray[it].editTextInput.text = null
         }
-        repeat(exposedDropDownArray.size){
+        repeat(exposedDropDownArray.size) {
             exposedDropDownArray[it].exposedDropDownTextView.text = null
         }
 
@@ -372,8 +383,6 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
         super.onDestroyView()
         _binding = null
     }
-
-
 
 
 }

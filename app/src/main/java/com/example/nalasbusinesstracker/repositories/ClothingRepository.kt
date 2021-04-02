@@ -19,9 +19,4 @@ class ClothingRepository @Inject constructor(private val clothingDao : ClothesDa
     fun getDistinctDominantColor() = clothingDao.getDistinctDominantColor()
     fun getDistinctSupplierName() = clothingDao.getDistinctSupplierName()
 
-
-
-
-
-
 }
