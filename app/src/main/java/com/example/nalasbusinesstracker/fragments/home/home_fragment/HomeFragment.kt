@@ -21,8 +21,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
 
-private const val TAG = "HomeFragment"
-
 @AndroidEntryPoint
 class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
     ChipGroup.OnCheckedChangeListener, SearchView.OnQueryTextListener {
@@ -30,7 +28,9 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val homeViewModel: HomeViewModel by viewModels()
-    private val homeAdapter: HomeAdapter by lazy { HomeAdapter(this) }
+    private val homeAdapter: HomeAdapter by lazy {
+        HomeAdapter(this)
+    }
     private var chipCategorySelected = 0
     private var chipColorSelected = 0
     private val filterArray = arrayOf("", "")
@@ -49,9 +49,11 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initializeRecyclerView()
-        floatingActionButton(view)
-        homeViewModel.initializeData()
+        if(savedInstanceState == null) {
+            initializeRecyclerView()
+            floatingActionButton(view)
+            homeViewModel.initializeData()
+        }
     }
 
     override fun onStart() {
@@ -104,7 +106,6 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
         binding.homeFragmentColorGroup.removeAllViews()
         if(homeViewModel.color.hasObservers()) homeViewModel.color.removeObservers(viewLifecycleOwner)
         it?.let { color ->
-            Log.i(TAG, "Color Size: ${color.size}")
             repeat(color.size) {
                 Chip(requireContext()).apply {
                     id = it
@@ -119,11 +120,6 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
                 }
             }
         }
-    }
-
-    private fun removeChipGroupObservers() {
-        homeViewModel.color.removeObserver(colorObserver)
-        homeViewModel.category.removeObserver(categoryObserver)
     }
 
 
@@ -144,8 +140,15 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
 
     override fun onStop() {
         super.onStop()
-        removeChipGroupObservers()
         binding.homeFragmentRv.removeOnScrollListener(scrollListener)
+        clearChipGroupValues()
+    }
+
+    private fun clearChipGroupValues(){
+        colorArray.clear()
+        categoryArray.clear()
+        binding.homeFragmentCategoryGroup.setOnCheckedChangeListener(null)
+        binding.homeFragmentColorGroup.setOnCheckedChangeListener(null)
     }
 
 
