@@ -38,6 +38,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -85,11 +86,13 @@ class AddInventoryFragment : Fragment(), View.OnClickListener {
     }
 
     private fun initializeDropDownMenu(){
-        val items = listOf(repository.getDistinctClothingType(), repository.getDistinctDominantColor(), repository.getDistinctSupplierName())
-        repeat(exposedDropDownArray.size){indexNumber ->
-            items[indexNumber].observe(viewLifecycleOwner){
-                val adapter = ArrayAdapter(requireContext(), R.layout.list_item, it)
-                (exposedDropDownArray[indexNumber].exposedDropDownLayout.editText as? AutoCompleteTextView)?.setAdapter(adapter)
+        lifecycleScope.launch(Main){
+            val items = listOf(repository.getDistinctClothingType(), repository.getDistinctDominantColor(), repository.getDistinctSupplierName())
+            repeat(exposedDropDownArray.size){indexNumber ->
+                items[indexNumber].collect{
+                    val adapter = ArrayAdapter(requireContext(), R.layout.list_item, it)
+                    (exposedDropDownArray[indexNumber].exposedDropDownLayout.editText as? AutoCompleteTextView)?.setAdapter(adapter)
+                }
             }
         }
     }

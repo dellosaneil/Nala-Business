@@ -9,6 +9,7 @@ import com.example.nalasbusinesstracker.room.data_classes.Clothes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
@@ -31,14 +32,16 @@ class HomeViewModel @Inject constructor(private val clothingRepository: Clothing
             val clothingTemp = clothingRepository.retrieveAllClothing()
             val categorySet = sortedSetOf<String>()
             val colorSet = sortedSetOf<String>()
-            clothingTemp.forEach {
-                categorySet.add(it.clothingType)
-                colorSet.add(it.dominantColor)
-            }
-            withContext(Main) {
-                _clothingList.value = clothingTemp
-                _category.value = categorySet
-                _color.value = colorSet
+            clothingTemp.collect { clothingList ->
+                clothingList.forEach {
+                    categorySet.add(it.clothingType)
+                    colorSet.add(it.dominantColor)
+                }
+                withContext(Main) {
+                    _clothingList.value = clothingList
+                    _category.value = categorySet
+                    _color.value = colorSet
+                }
             }
         }
     }
@@ -49,9 +52,10 @@ class HomeViewModel @Inject constructor(private val clothingRepository: Clothing
         val formatStatus = "%$status%"
         val formatCode = "%$code%"
         viewModelScope.launch(IO){
-            val clothingTemp = clothingRepository.queryClothes(formatType, formatColor, formatStatus, formatCode)
-            withContext(Main){
-                _clothingList.value = clothingTemp
+            clothingRepository.queryClothes(formatType, formatColor, formatStatus, formatCode).collect{
+                withContext(Main){
+                    _clothingList.value = it
+                }
             }
         }
     }

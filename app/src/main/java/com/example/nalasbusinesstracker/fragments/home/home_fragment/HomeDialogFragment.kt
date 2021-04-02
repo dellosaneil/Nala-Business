@@ -48,8 +48,6 @@ class HomeDialogFragment(private val clothingDetails : Clothes? = null) : Dialog
         }
         placeValues()
         listenClickEvents()
-
-
     }
 
     private fun listenClickEvents() {
