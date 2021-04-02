@@ -82,6 +82,7 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
 
     private val categoryObserver = Observer<SortedSet<String>> {
         binding.homeFragmentCategoryGroup.removeAllViews()
+        if(homeViewModel.category.hasObservers()) homeViewModel.category.removeObservers(viewLifecycleOwner)
         it?.let { category ->
             repeat(category.size) {
                 Chip(requireContext()).apply {
@@ -101,6 +102,7 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
 
     private val colorObserver = Observer<SortedSet<String>> {
         binding.homeFragmentColorGroup.removeAllViews()
+        if(homeViewModel.color.hasObservers()) homeViewModel.color.removeObservers(viewLifecycleOwner)
         it?.let { color ->
             Log.i(TAG, "Color Size: ${color.size}")
             repeat(color.size) {
