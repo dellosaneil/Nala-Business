@@ -3,6 +3,7 @@ package com.example.nalasbusinesstracker.fragments.home.home_fragment
 import android.content.Context
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
@@ -20,6 +21,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
 
+private const val TAG = "HomeFragment"
+
 @AndroidEntryPoint
 class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
     ChipGroup.OnCheckedChangeListener, SearchView.OnQueryTextListener {
@@ -30,9 +33,9 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
     private val homeAdapter: HomeAdapter by lazy { HomeAdapter(this) }
     private var chipCategorySelected = 0
     private var chipColorSelected = 0
-    private var filterArray = mutableListOf("", "")
-    private val categoryArray = mutableListOf<String>()
-    private val colorArray = mutableListOf<String>()
+    private val filterArray = arrayOf("", "")
+    private val categoryArray = mutableSetOf<String>()
+    private val colorArray = mutableSetOf<String>()
     private var currentList = listOf<Clothes>()
     private var alertDialogClothing: Clothes? = null
 
@@ -48,12 +51,12 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
         super.onViewCreated(view, savedInstanceState)
         initializeRecyclerView()
         floatingActionButton(view)
+        homeViewModel.initializeData()
     }
 
     override fun onStart() {
         super.onStart()
-        homeViewModel.initializeData()
-        attachChipGroupObservers()
+        prepareChipGroup()
         initializeSearchView()
     }
 
@@ -69,15 +72,16 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
     private val scrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
-            if (dy > 0) {
+            if (dy > 0 && binding.homeFragmentAdd.visibility == View.VISIBLE) {
                 binding.homeFragmentAdd.hide()
-            } else if (dy < 0) {
+            } else if (dy < 0 && binding.homeFragmentAdd.visibility == View.GONE) {
                 binding.homeFragmentAdd.show()
             }
         }
     }
 
     private val categoryObserver = Observer<SortedSet<String>> {
+        binding.homeFragmentCategoryGroup.removeAllViews()
         it?.let { category ->
             repeat(category.size) {
                 Chip(requireContext()).apply {
@@ -96,7 +100,9 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
     }
 
     private val colorObserver = Observer<SortedSet<String>> {
+        binding.homeFragmentColorGroup.removeAllViews()
         it?.let { color ->
+            Log.i(TAG, "Color Size: ${color.size}")
             repeat(color.size) {
                 Chip(requireContext()).apply {
                     id = it
@@ -114,12 +120,12 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
     }
 
     private fun removeChipGroupObservers() {
-        homeViewModel.category.removeObserver(categoryObserver)
         homeViewModel.color.removeObserver(colorObserver)
+        homeViewModel.category.removeObserver(categoryObserver)
     }
 
 
-    private fun attachChipGroupObservers() {
+    private fun prepareChipGroup() {
         binding.homeFragmentCategoryGroup.setOnCheckedChangeListener(this)
         binding.homeFragmentColorGroup.setOnCheckedChangeListener(this)
         colorArray.add("")
@@ -128,10 +134,6 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
         homeViewModel.color.observe(viewLifecycleOwner, colorObserver)
     }
 
-    override fun onPause() {
-        super.onPause()
-        removeChipGroupObservers()
-    }
 
     override fun onResume() {
         super.onResume()
@@ -140,10 +142,8 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
 
     override fun onStop() {
         super.onStop()
+        removeChipGroupObservers()
         binding.homeFragmentRv.removeOnScrollListener(scrollListener)
-        colorArray.clear()
-        categoryArray.clear()
-        homeViewModel.clearData()
     }
 
 
@@ -197,8 +197,8 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
     private fun updateCategoryFilter(checkedId: Int) {
         chipCategorySelected = checkedId + 1
         homeViewModel.queryClothes(
-            categoryArray[chipCategorySelected],
-            colorArray[chipColorSelected],
+            categoryArray.elementAt(chipCategorySelected),
+            colorArray.elementAt(chipColorSelected),
             filterArray[0],
             filterArray[1]
         )
@@ -209,15 +209,14 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
             R.id.homeFragment_categoryGroup -> updateCategoryFilter(checkedId)
             R.id.homeFragment_colorGroup -> updateColorFilter(checkedId)
         }
-
         binding.homeFragmentAdd.show()
     }
 
     private fun updateColorFilter(checkedId: Int) {
         chipColorSelected = checkedId + 1
         homeViewModel.queryClothes(
-            categoryArray[chipCategorySelected],
-            colorArray[chipColorSelected],
+            categoryArray.elementAt(chipCategorySelected),
+            colorArray.elementAt(chipColorSelected),
             filterArray[0],
             filterArray[1]
         )
@@ -231,8 +230,8 @@ class HomeFragment : FragmentLifecycle(), HomeAdapter.HomeClothingClicked,
         query?.let {
             filterArray[1] = it
             homeViewModel.queryClothes(
-                categoryArray[chipCategorySelected],
-                colorArray[chipColorSelected],
+                categoryArray.elementAt(chipCategorySelected),
+                colorArray.elementAt(chipColorSelected),
                 filterArray[0],
                 filterArray[1]
             )

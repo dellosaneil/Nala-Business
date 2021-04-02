@@ -1,5 +1,6 @@
 package com.example.nalasbusinesstracker.fragments.home.home_fragment
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,6 +16,8 @@ import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 
+
+private const val TAG = "HomeViewModel"
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val clothingRepository: ClothingRepository) :
@@ -58,12 +61,6 @@ class HomeViewModel @Inject constructor(private val clothingRepository: Clothing
                 }
             }
         }
-    }
-
-    fun clearData(){
-        _clothingList.value = listOf()
-        _category.value = sortedSetOf()
-        _color.value = sortedSetOf()
     }
 }
 

@@ -26,6 +26,7 @@ class HomeDialogFragment(private val clothingDetails : Clothes? = null) : Dialog
     private val binding get() = _binding!!
     private var clothingCopy : Clothes? = null
     private val outStateKey = "clothingKey"
+
     @Inject
     lateinit var clothingRepository: ClothingRepository
 
